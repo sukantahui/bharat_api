@@ -25,8 +25,8 @@ class StoreSaleRequest extends BaseRequest
                 'string',
                 'size:10',
                 function ($attribute, $value, $fail) {
-                    // Indian Tax Regulation: Cash receipts >= ₹2,00,000 require customer PAN
-                    $mode = $this->input('payment_mode');
+                    // Indian Tax Regulation: Cash receipts >= 2,00,000 require customer PAN
+                    $mode = strtolower((string) $this->input('payment_mode'));
                     $paid = (float) $this->input('paid_amount', 0);
                     if ($mode === 'cash' && $paid >= 200000 && empty($value)) {
                         $fail('Customer PAN is legally mandatory for cash payments of ₹2,00,000 or more.');
@@ -40,10 +40,17 @@ class StoreSaleRequest extends BaseRequest
             'tax_type'                   => 'sometimes|in:intra_state,inter_state,non_gst',
             'discount_amount'            => 'nullable|numeric|min:0',
             'paid_amount'                => 'nullable|numeric|min:0',
-            'payment_account_id'         => 'nullable|integer|exists:accounts,id', // Cash Counter or Bank
+            'payment_account_id'         => 'nullable|integer|exists:accounts,id',
             'payment_mode'               => 'nullable|in:cash,bank_transfer,upi,card,cheque',
             'transaction_reference'      => 'nullable|string|max:100',
             'notes'                      => 'nullable|string',
+
+            // Multi-Area POS Terminal metadata (optional)
+            'terminal_id'                => 'nullable|string|max:50',
+            'terminal_code'              => 'nullable|string|max:50',
+            'terminal_name'              => 'nullable|string|max:100',
+            'terminal_area'              => 'nullable|string|max:100',
+            'cashier_name'               => 'nullable|string|max:100',
 
             // Sale Items
             'items'                      => 'required|array|min:1',
@@ -82,14 +89,34 @@ class StoreSaleRequest extends BaseRequest
 
         $merge = [];
 
+        // Auto-default invoice date to today if omitted
+        if (!$this->has('invoice_date') || empty($this->invoice_date)) {
+            $merge['invoice_date'] = now()->format('Y-m-d');
+        }
+
+        // Account mapping
         if (!$this->has('payment_account_id') && $this->has('deposit_account_id')) {
             $merge['payment_account_id'] = $this->deposit_account_id;
+        }
+
+        // Default to first active account if omitted
+        if ((!$this->has('payment_account_id') || empty($this->payment_account_id)) && $this->has('paid_amount') && (float) $this->paid_amount > 0) {
+            $defaultAcc = \App\Models\Account::first();
+            if ($defaultAcc) {
+                $merge['payment_account_id'] = $defaultAcc->id;
+            }
+        }
+
+        // Payment mode normalization
+        if ($this->has('payment_mode')) {
+            $merge['payment_mode'] = strtolower((string) $this->payment_mode);
         }
 
         if ($this->has('invoice_type') && !in_array($this->invoice_type, ['tax_invoice', 'bill_of_supply', 'cash_memo'])) {
             $merge['invoice_type'] = 'tax_invoice';
         }
 
+        // Items normalization
         if ($this->has('items') && is_array($this->items)) {
             $items = $this->items;
             foreach ($items as &$item) {
@@ -100,14 +127,22 @@ class StoreSaleRequest extends BaseRequest
             $merge['items'] = $items;
         }
 
-        if ($this->has('old_gold_exchanges') && is_array($this->old_gold_exchanges)) {
-            $exchanges = $this->old_gold_exchanges;
+        // Handle old gold alias and empty arrays
+        $rawExchanges = $this->input('old_gold_exchanges') ?? $this->input('old_gold_items');
+        if (is_array($rawExchanges) && count($rawExchanges) > 0) {
+            $exchanges = $rawExchanges;
             foreach ($exchanges as &$ex) {
+                if (!isset($ex['item_description']) && isset($ex['description'])) {
+                    $ex['item_description'] = $ex['description'];
+                }
                 if (!isset($ex['buying_rate_per_gram']) && isset($ex['rate_per_gram'])) {
                     $ex['buying_rate_per_gram'] = $ex['rate_per_gram'];
                 }
                 if (!isset($ex['dust_stone_weight']) && isset($ex['dust_weight'])) {
                     $ex['dust_stone_weight'] = $ex['dust_weight'];
+                }
+                if (!isset($ex['purity_percentage']) && isset($ex['purity_percent'])) {
+                    $ex['purity_percentage'] = $ex['purity_percent'];
                 }
                 if (!isset($ex['purity_percentage']) && isset($ex['purity_id'])) {
                     $p = \App\Models\Purity::find($ex['purity_id']);
@@ -117,6 +152,9 @@ class StoreSaleRequest extends BaseRequest
                 }
             }
             $merge['old_gold_exchanges'] = $exchanges;
+        } else {
+            // Nullify so validation rule required_with won't fail on empty array
+            $merge['old_gold_exchanges'] = null;
         }
 
         if (!empty($merge)) {

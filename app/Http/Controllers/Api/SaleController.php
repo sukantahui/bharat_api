@@ -28,7 +28,7 @@ class SaleController extends Controller
 
     public function index(Request $request)
     {
-        $query = Sale::with(['party', 'items', 'oldGoldExchanges']);
+        $query = Sale::with(['party', 'items.purity', 'oldGoldExchanges']);
 
         if ($request->filled('party_id')) {
             $query->where('party_id', $request->party_id);
@@ -49,7 +49,7 @@ class SaleController extends Controller
 
     public function show($id)
     {
-        $sale = Sale::with(['party', 'items', 'oldGoldExchanges'])->findOrFail($id);
+        $sale = Sale::with(['party', 'items.purity', 'oldGoldExchanges'])->findOrFail($id);
         return ResponseHelper::success('Sales invoice retrieved', new SaleResource($sale));
     }
 
@@ -287,7 +287,7 @@ class SaleController extends Controller
                 }
             }
 
-            return ResponseHelper::success('Sale invoice generated successfully', new SaleResource($sale->load(['party', 'items', 'oldGoldExchanges'])), 201);
+            return ResponseHelper::success('Sale invoice generated successfully', new SaleResource($sale->load(['party', 'items.purity', 'oldGoldExchanges'])), 201);
         });
     }
 
