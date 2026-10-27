@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNAT API — Project Audit & Rectification Roadmap</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-hover: rgba(31, 41, 55, 0.95);
+      --bg-code: #030712;
+      --border-color: #1f293d;
+      --border-glow: rgba(56, 189, 248, 0.3);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #3b82f6;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --gradient-brand: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
+      --gradient-surface: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2);
+      --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.4);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: #f1f5f9;
+      --bg-code: #0f172a;
+      --border-color: #e2e8f0;
+      --border-glow: rgba(3, 105, 161, 0.2);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    [data-theme="light"] .header {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-badge {
+      background: var(--gradient-brand);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+    }
+
+    .header-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.15rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      outline: none;
+      width: 260px;
+    }
+
+    .search-wrap {
+      position: relative;
+    }
+
+    .search-wrap i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1300px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem;
+    }
+
+    /* Hero Banner & Progress Bar */
+    .hero {
+      background: var(--gradient-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.25rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .hero-title span {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      color: var(--text-secondary);
+      font-size: 1.05rem;
+      margin-bottom: 1.75rem;
+      max-width: 800px;
+    }
+
+    /* Live Progress Tracker */
+    .progress-card {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.65rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 9999px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gradient-brand);
+      border-radius: 9999px;
+      transition: width 0.4s ease;
+    }
+
+    /* Filter Bar */
+    .filter-bar {
+      display: flex;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .filter-pill {
+      padding: 0.5rem 1.15rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      transition: all 0.2s;
+    }
+
+    .filter-pill:hover, .filter-pill.active {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    /* Phase Section */
+    .phase-section {
+      margin-bottom: 3.5rem;
+    }
+
+    .phase-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .phase-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .phase-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+    }
+
+    .phase-title {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .priority-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+
+    .p0 { background: rgba(244, 63, 94, 0.15); border: 1px solid rgba(244, 63, 94, 0.3); color: var(--accent-rose); }
+    .p1 { background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.3); color: var(--accent-amber); }
+    .p2 { background: rgba(56, 189, 248, 0.15); border: 1px solid rgba(56, 189, 248, 0.3); color: var(--accent-cyan); }
+
+    /* Task Card */
+    .task-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.5rem;
+      margin-bottom: 1.25rem;
+      box-shadow: var(--shadow-md);
+      transition: all 0.2s;
+    }
+
+    .task-card:hover {
+      border-color: rgba(56, 189, 248, 0.35);
+    }
+
+    .task-card.completed {
+      opacity: 0.65;
+      background: rgba(16, 185, 129, 0.04);
+      border-color: rgba(16, 185, 129, 0.25);
+    }
+
+    .task-card.completed .task-title {
+      text-decoration: line-through;
+    }
+
+    .task-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .custom-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      accent-color: var(--accent-emerald);
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .task-meta {
+      flex: 1;
+    }
+
+    .task-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .task-file-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--accent-cyan);
+      text-decoration: none;
+      margin-bottom: 0.5rem;
+    }
+
+    .task-file-link:hover {
+      text-decoration: underline;
+    }
+
+    .task-desc {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Code Block inside Card */
+    .code-box {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+    }
+
+    .code-top {
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.4rem 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.72rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    .copy-btn:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    pre {
+      padding: 0.85rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="header">
+    <a href="#" class="header-logo">
+      <span class="logo-badge">CNAT API</span>
+      <span class="header-title">Audit & Rectification Roadmap</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" class="search-box" id="taskSearch" placeholder="Search tasks, files, rules..." onkeyup="filterTasks()" />
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle Theme">
+        <i data-lucide="sun" id="themeIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <h1 class="hero-title">Step-by-Step <span>Rectification</span> Roadmap</h1>
+      <p class="hero-subtitle">
+        Follow this interactive checklist to rectify your entire codebase, harden authentication security, optimize database queries, and achieve enterprise-grade reliability.
+      </p>
+
+      <!-- Live Progress Bar -->
+      <div class="progress-card">
+        <div class="progress-header">
+          <span>Overall Project Rectification Progress</span>
+          <span id="progressText">0% (0 / 20 Completed)</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Pills -->
+    <div class="filter-bar">
+      <div class="filter-pill active" onclick="filterCategory('all', this)">All Tasks (20)</div>
+      <div class="filter-pill" onclick="filterCategory('p0', this)">🚨 P0: Security (5)</div>
+      <div class="filter-pill" onclick="filterCategory('p1', this)">🏛️ P1: Architecture & DB (8)</div>
+      <div class="filter-pill" onclick="filterCategory('p2', this)">🧪 P2: Testing & Production (7)</div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PHASE 1: Security & Auth Hardening -->
+    <!-- ========================================================================= -->
+    <div class="phase-section" data-category="p0">
+      <div class="phase-header">
+        <div class="phase-title-wrap">
+          <div class="phase-icon"><i data-lucide="shield-alert"></i></div>
+          <h2 class="phase-title">Phase 1: Security & Authentication Hardening</h2>
+        </div>
+        <span class="priority-badge p0">P0 — CRITICAL</span>
+      </div>
+
+      <!-- Task 1.1 -->
+      <div class="task-card" id="task_1_1">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_1_1')" />
+          <div class="task-meta">
+            <h3 class="task-title">1.1 Configure Sanctum Token Expiration</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/config/sanctum.php#L49" class="task-file-link"><i data-lucide="external-link"></i> config/sanctum.php:49</a>
+            <p class="task-desc">
+              Tokens currently never expire (<code style="color:var(--accent-amber)">'expiration' => null</code>). Set a default 30-day token lifetime via environment variables.
+            </p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>config/sanctum.php</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>'expiration' => env('SANCTUM_EXPIRATION_MINUTES', 60 * 24 * 30), // 30 days</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 1.2 -->
+      <div class="task-card" id="task_1_2">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_1_2')" />
+          <div class="task-meta">
+            <h3 class="task-title">1.2 Dynamic CORS Whitelist from .env</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/config/cors.php#L9" class="task-file-link"><i data-lucide="external-link"></i> config/cors.php:9</a>
+            <p class="task-desc">
+              Prevent CORS blocks in staging and production by reading allowed origins dynamically from <code style="color:var(--accent-cyan)">.env</code>.
+            </p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>config/cors.php</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>'allowed_origins' => explode(',', env('CORS_ALLOWED_ORIGINS', 'http://localhost:5173,http://127.0.0.1:5173')),</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 1.3 -->
+      <div class="task-card" id="task_1_3">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_1_3')" />
+          <div class="task-meta">
+            <h3 class="task-title">1.3 Add Rate Limiting to Sensitive Submission Routes</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/routes/api.php" class="task-file-link"><i data-lucide="external-link"></i> routes/api.php</a>
+            <p class="task-desc">
+              Apply <code style="color:var(--accent-cyan)">throttle:10,1</code> to student admissions and user registration to prevent automated spamming.
+            </p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>routes/api.php</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>Route::post('admissionWithStudent', 'storeStudentWithAdmission')->middleware('throttle:10,1');
+Route::post('/', 'register')->middleware('throttle:10,1');</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 1.4 -->
+      <div class="task-card" id="task_1_4">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_1_4')" />
+          <div class="task-meta">
+            <h3 class="task-title">1.4 Enforce Hidden Attributes & Mass Assignment Protection</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/app/Models/User.php" class="task-file-link"><i data-lucide="external-link"></i> app/Models/User.php</a>
+            <p class="task-desc">
+              Ensure passwords and tokens never leak into JSON outputs and all Eloquent models use explicit <code style="color:var(--accent-cyan)">$fillable</code> arrays.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 1.5 -->
+      <div class="task-card" id="task_1_5">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_1_5')" />
+          <div class="task-meta">
+            <h3 class="task-title">1.5 Unified JSON Exception Handling</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/bootstrap/app.php#L29" class="task-file-link"><i data-lucide="external-link"></i> bootstrap/app.php:29</a>
+            <p class="task-desc">
+              Add explicit renderers for <code style="color:var(--accent-cyan)">AuthenticationException</code> and <code style="color:var(--accent-cyan)">ValidationException</code> to guarantee JSON error formatting.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PHASE 2: Architecture & Cleanliness -->
+    <!-- ========================================================================= -->
+    <div class="phase-section" data-category="p1">
+      <div class="phase-header">
+        <div class="phase-title-wrap">
+          <div class="phase-icon"><i data-lucide="layers"></i></div>
+          <h2 class="phase-title">Phase 2: Architecture & Code Cleanliness</h2>
+        </div>
+        <span class="priority-badge p1">P1 — HIGH</span>
+      </div>
+
+      <!-- Task 2.1 -->
+      <div class="task-card" id="task_2_1">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_2_1')" />
+          <div class="task-meta">
+            <h3 class="task-title">2.1 Clean up 28 Dead / Stubbed Policy Classes</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/app/Policies" class="task-file-link"><i data-lucide="external-link"></i> app/Policies/</a>
+            <p class="task-desc">
+              Remove unused policy stubs returning <code style="color:var(--accent-rose)">return false;</code> to prevent accidental permission locks, or implement real role authorization.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2.2 -->
+      <div class="task-card" id="task_2_2">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_2_2')" />
+          <div class="task-meta">
+            <h3 class="task-title">2.2 Consolidate Response Helpers</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/app/Helper/ResponseHelper.php" class="task-file-link"><i data-lucide="external-link"></i> app/Helper/ResponseHelper.php</a>
+            <p class="task-desc">
+              Unify all API responses through <code style="color:var(--accent-cyan)">ResponseHelper</code> as the single source of truth.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2.3 -->
+      <div class="task-card" id="task_2_3">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_2_3')" />
+          <div class="task-meta">
+            <h3 class="task-title">2.3 Remove Stray Backup Files & Update .gitignore</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/.gitignore" class="task-file-link"><i data-lucide="external-link"></i> .gitignore</a>
+            <p class="task-desc">
+              Add <code style="color:var(--accent-cyan)">*.bak</code> and <code style="color:var(--accent-cyan)">*.hui</code> to <code style="color:var(--accent-cyan)">.gitignore</code> and delete orphaned backup files.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 2.4 -->
+      <div class="task-card" id="task_2_4">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_2_4')" />
+          <div class="task-meta">
+            <h3 class="task-title">2.4 Clean Controller Docblocks & Code Comments</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/app/Http/Controllers/Api/AuthController.php#L19" class="task-file-link"><i data-lucide="external-link"></i> AuthController.php:19</a>
+            <p class="task-desc">
+              Remove duplicate docblock comment openers and unneeded comments in controllers.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PHASE 3: Database Integrity -->
+    <!-- ========================================================================= -->
+    <div class="phase-section" data-category="p1">
+      <div class="phase-header">
+        <div class="phase-title-wrap">
+          <div class="phase-icon"><i data-lucide="database"></i></div>
+          <h2 class="phase-title">Phase 3: Database Integrity & Query Performance</h2>
+        </div>
+        <span class="priority-badge p1">P1 — HIGH</span>
+      </div>
+
+      <!-- Task 3.1 -->
+      <div class="task-card" id="task_3_1">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_3_1')" />
+          <div class="task-meta">
+            <h3 class="task-title">3.1 Fix Migration Year Prefix Typo</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/database/migrations" class="task-file-link"><i data-lucide="external-link"></i> database/migrations/</a>
+            <p class="task-desc">
+              Rename <code style="color:var(--accent-amber)">025_08_25_...</code> to <code style="color:var(--accent-emerald)">2025_08_25_...</code> for chronological migration order.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3.2 -->
+      <div class="task-card" id="task_3_2">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_3_2')" />
+          <div class="task-meta">
+            <h3 class="task-title">3.2 Add Search Indexes for High-Traffic Queries</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/database/migrations" class="task-file-link"><i data-lucide="external-link"></i> database/migrations/</a>
+            <p class="task-desc">
+              Index <code style="color:var(--accent-cyan)">registration_number</code>, <code style="color:var(--accent-cyan)">admission_number</code>, <code style="color:var(--accent-cyan)">receipt_no</code>, and <code style="color:var(--accent-cyan)">certificate_number</code> for instant lookups.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3.3 -->
+      <div class="task-card" id="task_3_3">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_3_3')" />
+          <div class="task-meta">
+            <h3 class="task-title">3.3 Audit Foreign Key Deletion Cascades</h3>
+            <p class="task-desc">
+              Verify all foreign keys specify explicit <code style="color:var(--accent-cyan)">nullOnDelete()</code> or <code style="color:var(--accent-cyan)">cascadeOnDelete()</code> behaviors.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 3.4 -->
+      <div class="task-card" id="task_3_4">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_3_4')" />
+          <div class="task-meta">
+            <h3 class="task-title">3.4 Prevent N+1 Queries in Heavy Endpoints</h3>
+            <p class="task-desc">
+              Ensure eager loading (<code style="color:var(--accent-cyan)">with([...])</code>) is always used when serializing related resources.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PHASE 4: Automated Testing -->
+    <!-- ========================================================================= -->
+    <div class="phase-section" data-category="p2">
+      <div class="phase-header">
+        <div class="phase-title-wrap">
+          <div class="phase-icon"><i data-lucide="test-tube"></i></div>
+          <h2 class="phase-title">Phase 4: Automated Testing Suite (Pest)</h2>
+        </div>
+        <span class="priority-badge p2">P2 — MEDIUM</span>
+      </div>
+
+      <!-- Task 4.1 -->
+      <div class="task-card" id="task_4_1">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_4_1')" />
+          <div class="task-meta">
+            <h3 class="task-title">4.1 Initialize Tests Directory & Pest Framework</h3>
+            <p class="task-desc">
+              Create the <code style="color:var(--accent-cyan)">tests/</code> directory structure with <code style="color:var(--accent-cyan)">Pest.php</code> and <code style="color:var(--accent-cyan)">TestCase.php</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4.2 -->
+      <div class="task-card" id="task_4_2">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_4_2')" />
+          <div class="task-meta">
+            <h3 class="task-title">4.2 Write Feature Tests for Authentication & Sanctum</h3>
+            <p class="task-desc">
+              Test login, token creation, unauthorized 401 response, and token revocation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4.3 -->
+      <div class="task-card" id="task_4_3">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_4_3')" />
+          <div class="task-meta">
+            <h3 class="task-title">4.3 Write Feature Tests for Role-Based Access (CheckRole)</h3>
+            <p class="task-desc">
+              Test that Admin, Teacher, and Student roles only access their permitted endpoints (403 verification).
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 4.4 -->
+      <div class="task-card" id="task_4_4">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_4_4')" />
+          <div class="task-meta">
+            <h3 class="task-title">4.4 Add Test Script to composer.json</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/composer.json#L41" class="task-file-link"><i data-lucide="external-link"></i> composer.json</a>
+            <p class="task-desc">
+              Add <code style="color:var(--accent-cyan)">"test": "pest --colors=always"</code> script.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- PHASE 5: Production Readiness -->
+    <!-- ========================================================================= -->
+    <div class="phase-section" data-category="p2">
+      <div class="phase-header">
+        <div class="phase-title-wrap">
+          <div class="phase-icon"><i data-lucide="rocket"></i></div>
+          <h2 class="phase-title">Phase 5: Production Readiness & Automation</h2>
+        </div>
+        <span class="priority-badge p2">P2 — MEDIUM</span>
+      </div>
+
+      <!-- Task 5.1 -->
+      <div class="task-card" id="task_5_1">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_5_1')" />
+          <div class="task-meta">
+            <h3 class="task-title">5.1 Schedule Automated Daily Database Backups</h3>
+            <a href="file:///e:/wamp64/www/cnat_api/routes/console.php" class="task-file-link"><i data-lucide="external-link"></i> routes/console.php</a>
+            <p class="task-desc">
+              Schedule <code style="color:var(--accent-cyan)">php artisan db:backup</code> to run daily at 02:00 AM automatically.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 5.2 -->
+      <div class="task-card" id="task_5_2">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_5_2')" />
+          <div class="task-meta">
+            <h3 class="task-title">5.2 Optimize Route, Config & View Caching</h3>
+            <p class="task-desc">
+              Ensure all route closures and configs are cacheable with <code style="color:var(--accent-cyan)">php artisan config:cache</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task 5.3 -->
+      <div class="task-card" id="task_5_3">
+        <div class="task-header">
+          <input type="checkbox" class="custom-checkbox" onchange="toggleTask('task_5_3')" />
+          <div class="task-meta">
+            <h3 class="task-title">5.3 Audit Log Retention & Security Masking</h3>
+            <p class="task-desc">
+              Set 14-day log retention and ensure sensitive authorization headers and passwords are never written to disk logs.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    // Theme Toggle
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const newTheme = current === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', newTheme);
+      const icon = document.getElementById('themeIcon');
+      icon.setAttribute('data-lucide', newTheme === 'light' ? 'moon' : 'sun');
+      lucide.createIcons();
+    }
+
+    // LocalStorage Persistent Progress
+    const totalTasks = 20;
+
+    function initProgress() {
+      const saved = JSON.parse(localStorage.getItem('cnat_audit_progress') || '{}');
+      const isFirstLoad = Object.keys(saved).length === 0 && !localStorage.getItem('cnat_audit_initialized');
+
+      if (isFirstLoad) {
+        document.querySelectorAll('.task-card').forEach(card => {
+          saved[card.id] = true;
+        });
+        localStorage.setItem('cnat_audit_progress', JSON.stringify(saved));
+        localStorage.setItem('cnat_audit_initialized', 'true');
+      }
+
+      let completedCount = 0;
+      document.querySelectorAll('.task-card').forEach(card => {
+        const id = card.id;
+        const checkbox = card.querySelector('.custom-checkbox');
+        if (saved[id] || isFirstLoad) {
+          checkbox.checked = true;
+          card.classList.add('completed');
+          completedCount++;
+        }
+      });
+
+      updateProgressBar(completedCount);
+    }
+
+    function toggleTask(id) {
+      const card = document.getElementById(id);
+      const checkbox = card.querySelector('.custom-checkbox');
+      const saved = JSON.parse(localStorage.getItem('cnat_audit_progress') || '{}');
+
+      if (checkbox.checked) {
+        card.classList.add('completed');
+        saved[id] = true;
+      } else {
+        card.classList.remove('completed');
+        delete saved[id];
+      }
+
+      localStorage.setItem('cnat_audit_progress', JSON.stringify(saved));
+      const completedCount = Object.keys(saved).length;
+      updateProgressBar(completedCount);
+    }
+
+    function updateProgressBar(count) {
+      const pct = Math.round((count / totalTasks) * 100);
+      document.getElementById('progressBar').style.width = pct + '%';
+      document.getElementById('progressText').innerText = `${pct}% (${count} / ${totalTasks} Completed)`;
+    }
+
+    // Filters
+    function filterCategory(cat, el) {
+      document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+      el.classList.add('active');
+
+      document.querySelectorAll('.phase-section').forEach(sec => {
+        if (cat === 'all' || sec.getAttribute('data-category') === cat) {
+          sec.style.display = '';
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+    }
+
+    function filterTasks() {
+      const q = document.getElementById('taskSearch').value.toLowerCase();
+      document.querySelectorAll('.task-card').forEach(card => {
+        const text = card.innerText.toLowerCase();
+        card.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    function copyCode(btn) {
+      const code = btn.closest('.code-box').querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+        btn.style.color = 'var(--accent-emerald)';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.color = '';
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    initProgress();
+  </script>
+</body>
+</html>

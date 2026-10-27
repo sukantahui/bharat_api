@@ -1,0 +1,135 @@
+// Custom VS Code keybindings for productivity
+[
+    /* =========================
+       YOUR EXISTING SHORTCUTS
+       ========================= */
+    {
+        "key": "shift+enter",
+        "command": "editor.emmet.action.wrapWithAbbreviation"
+    },
+    {
+        "key": "z x",
+        "command": "editor.action.inlineSuggest.snooze",
+        "when": "true"
+    },
+    {
+        "key": "shift+alt+down",
+        "command": "editor.action.copyLinesDownAction",
+        "when": "editorTextFocus"
+    },
+    {
+        "key": "shift+alt+up",
+        "command": "editor.action.copyLinesUpAction",
+        "when": "editorTextFocus"
+    },
+    /* =========================
+       EDITING & CODE ACTIONS
+       ========================= */
+    {
+        "key": "ctrl+shift+d",
+        "command": "editor.action.copyLinesDownAction"
+    },
+    {
+        "key": "ctrl+shift+k",
+        "command": "editor.action.deleteLines"
+    },
+    {
+        "key": "alt+shift+f",
+        "command": "editor.action.formatDocument"
+    },
+    {
+        "key": "ctrl+/",
+        "command": "editor.action.commentLine"
+    },
+    /* =========================
+       NAVIGATION
+       ========================= */
+    {
+        "key": "ctrl+p",
+        "command": "workbench.action.quickOpen"
+    },
+    {
+        "key": "ctrl+shift+o",
+        "command": "workbench.action.gotoSymbol"
+    },
+    {
+        "key": "ctrl+g",
+        "command": "workbench.action.gotoLine"
+    },
+    /* =========================
+       MULTI-CURSOR & SELECTION
+       ========================= */
+    {
+        "key": "ctrl+d",
+        "command": "editor.action.addSelectionToNextFindMatch"
+    },
+    {
+        "key": "ctrl+shift+l",
+        "command": "editor.action.selectHighlights"
+    },
+    {
+        "key": "alt+click",
+        "command": "editor.action.insertCursor"
+    },
+    /* =========================
+       SEARCH & REFACTOR
+       ========================= */
+    {
+        "key": "ctrl+shift+r",
+        "command": "editor.action.rename"
+    },
+    {
+        "key": "ctrl+.",
+        "command": "editor.action.quickFix"
+    },
+    {
+        "key": "ctrl+shift+f",
+        "command": "workbench.action.findInFiles"
+    },
+    /* =========================
+       FILE & WORKSPACE
+       ========================= */
+    {
+        "key": "ctrl+b",
+        "command": "workbench.action.toggleSidebarVisibility"
+    },
+    {
+        "key": "ctrl+`",
+        "command": "workbench.action.terminal.toggleTerminal"
+    },
+    {
+        "key": "ctrl+shift+n",
+        "command": "workbench.action.newWindow"
+    },
+    /* =========================
+       GIT (VERY POPULAR)
+       ========================= */
+    {
+        "key": "ctrl+shift+g",
+        "command": "workbench.view.scm"
+    },
+    {
+        "key": "ctrl+enter",
+        "command": "git.commit",
+        "when": "gitInputBoxFocus"
+    },
+    /* =========================
+       DEBUGGING
+       ========================= */
+    {
+        "key": "f5",
+        "command": "workbench.action.debug.start"
+    },
+    {
+        "key": "shift+f5",
+        "command": "workbench.action.debug.stop"
+    },
+    {
+        "key": "f10",
+        "command": "workbench.action.debug.stepOver"
+    },
+    {
+        "key": "f11",
+        "command": "workbench.action.debug.stepInto"
+    }
+]

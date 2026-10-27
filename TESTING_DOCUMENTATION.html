@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNAT API — Master Testing Documentation & Test Suite Guide</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0a0e17;
+      --bg-secondary: #101626;
+      --bg-card: rgba(16, 22, 38, 0.85);
+      --bg-card-hover: rgba(26, 35, 60, 0.95);
+      --bg-code: #060911;
+      --border-color: #1e293b;
+      --border-glow: rgba(56, 189, 248, 0.25);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #3b82f6;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --gradient-brand: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
+      --gradient-surface: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.8) 100%);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+      --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.5);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: #f1f5f9;
+      --bg-code: #0f172a;
+      --border-color: #e2e8f0;
+      --border-glow: rgba(3, 105, 161, 0.2);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: var(--bg-primary); }
+    ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: var(--accent-cyan); }
+
+    /* Layout */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(10, 14, 23, 0.85);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    [data-theme="light"] .header {
+      background: rgba(248, 250, 252, 0.85);
+    }
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+    .logo-badge {
+      background: var(--gradient-brand);
+      color: #fff;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      letter-spacing: 0.05em;
+    }
+    .header-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.2rem;
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .theme-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .theme-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+      transform: translateY(-2px);
+    }
+    .search-wrap {
+      position: relative;
+    }
+    .search-wrap i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+    .search-box {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.45rem 0.85rem 0.45rem 2.2rem;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-family: var(--font-body);
+      outline: none;
+      width: 240px;
+      transition: all 0.2s;
+    }
+    .search-box:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+      width: 300px;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 2.5rem 1.5rem 5rem 1.5rem;
+    }
+
+    /* Hero Banner */
+    .hero {
+      background: radial-gradient(circle at 50% 0%, rgba(56, 189, 248, 0.15), transparent 70%), var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 3rem 2rem;
+      margin-bottom: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+    }
+    .hero-title span {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero-subtitle {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+      line-height: 1.7;
+      margin-bottom: 2rem;
+    }
+    .hero-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.5rem;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      backdrop-filter: blur(10px);
+    }
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 10px;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-cyan);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); }
+    .stat-icon.purple { background: rgba(168, 85, 247, 0.1); color: var(--accent-purple); }
+    .stat-icon.amber { background: rgba(245, 158, 11, 0.1); color: var(--accent-amber); }
+    .stat-number {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border-color);
+      margin-bottom: 2.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+    }
+    .nav-tab {
+      padding: 0.75rem 1.25rem;
+      font-family: var(--font-heading);
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      background: transparent;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .nav-tab:hover {
+      color: var(--text-primary);
+      background: rgba(255, 255, 255, 0.05);
+    }
+    .nav-tab.active {
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.1);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    /* Section Cards */
+    .section-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2.5rem;
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.2s;
+    }
+    .section-card:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 1rem;
+    }
+    .section-badge {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--gradient-brand);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-family: var(--font-heading);
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.4rem;
+      font-weight: 700;
+    }
+    .section-desc {
+      color: var(--text-secondary);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Step Cards */
+    .steps-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+    .step-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      position: relative;
+    }
+    .step-header {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+    }
+    .step-num {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+    }
+    .step-name {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    /* Code Snippet Box */
+    .code-box {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin: 1rem 0;
+      overflow: hidden;
+      position: relative;
+    }
+    .code-top {
+      background: rgba(255, 255, 255, 0.03);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+    .copy-btn {
+      background: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s;
+    }
+    .copy-btn:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+    pre {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+    code {
+      font-family: var(--font-mono);
+    }
+
+    /* Matrix / Table */
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.9rem;
+    }
+    .matrix-table th, .matrix-table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .matrix-table th {
+      background: var(--bg-secondary);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+    .matrix-table tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      font-family: var(--font-mono);
+    }
+    .badge.p0 { background: rgba(244, 63, 94, 0.15); color: var(--accent-rose); }
+    .badge.p1 { background: rgba(245, 158, 11, 0.15); color: var(--accent-amber); }
+    .badge.p2 { background: rgba(56, 189, 248, 0.15); color: var(--accent-cyan); }
+    .badge.pass { background: rgba(16, 185, 129, 0.15); color: var(--accent-emerald); }
+
+    /* CLI Runner Box */
+    .terminal-box {
+      background: #000;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      font-family: var(--font-mono);
+      margin: 1.5rem 0;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.8);
+    }
+    .terminal-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid #222;
+      padding-bottom: 0.75rem;
+    }
+    .terminal-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+    }
+    .terminal-dot.red { background: #ef4444; }
+    .terminal-dot.yellow { background: #f59e0b; }
+    .terminal-dot.green { background: #10b981; }
+    .terminal-title {
+      font-size: 0.75rem;
+      color: #666;
+      margin-left: 0.5rem;
+    }
+    .terminal-line {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin: 0.4rem 0;
+      font-size: 0.85rem;
+    }
+    .prompt { color: var(--accent-cyan); }
+    .out-green { color: var(--accent-emerald); font-weight: 600; }
+    .out-muted { color: #888; }
+    .out-white { color: #fff; }
+
+    /* Callout Box */
+    .callout {
+      border-left: 4px solid var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.06);
+      padding: 1.25rem;
+      border-radius: 0 10px 10px 0;
+      margin: 1.5rem 0;
+    }
+    .callout.tip {
+      border-color: var(--accent-emerald);
+      background: rgba(16, 185, 129, 0.06);
+    }
+    .callout.warning {
+      border-color: var(--accent-amber);
+      background: rgba(245, 158, 11, 0.06);
+    }
+    .callout-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-cyan);
+    }
+    .callout.tip .callout-title { color: var(--accent-emerald); }
+    .callout.warning .callout-title { color: var(--accent-amber); }
+
+    /* Accordion */
+    .accordion {
+      margin: 1.5rem 0;
+    }
+    .accordion-item {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      margin-bottom: 0.75rem;
+      overflow: hidden;
+    }
+    .accordion-toggle {
+      width: 100%;
+      padding: 1.2rem;
+      background: transparent;
+      border: none;
+      color: var(--text-primary);
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .accordion-toggle:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .accordion-content {
+      padding: 0 1.2rem 1.2rem 1.2rem;
+      display: none;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .accordion-item.active .accordion-content {
+      display: block;
+    }
+    .accordion-item.active .accordion-toggle i {
+      transform: rotate(180deg);
+    }
+    .accordion-toggle i {
+      transition: transform 0.2s;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-color);
+      padding: 2.5rem 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header { padding: 1rem; flex-direction: column; gap: 1rem; }
+      .search-box { width: 100%; }
+      .search-box:focus { width: 100%; }
+      .hero { padding: 2rem 1rem; }
+      .hero-title { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header -->
+  <header class="header">
+    <a href="#" class="header-logo">
+      <span class="logo-badge">PEST 3</span>
+      <span class="header-title">CNAT API Testing Master Guide</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" class="search-box" id="docSearch" placeholder="Search testing guide..." onkeyup="searchDoc()" />
+      </div>
+      <button class="theme-btn" onclick="toggleTheme()" title="Toggle Theme">
+        <i data-lucide="sun" id="themeIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <!-- Hero Section -->
+    <div class="hero">
+      <div class="hero-tag">
+        <i data-lucide="shield-check"></i> Enterprise Quality Assurance Framework
+      </div>
+      <h1 class="hero-title">Automated Testing <span>Architecture & Master Guide</span></h1>
+      <p class="hero-subtitle">
+        Comprehensive guide for writing, running, and maintaining high-speed automated unit, feature, and integration test suites in the CNAT API ecosystem using Pest 3.x, PHPUnit 11, and Laravel 12.
+      </p>
+
+      <!-- Stats Bar -->
+      <div class="hero-stats">
+        <div class="stat-card">
+          <div class="stat-icon green"><i data-lucide="check-circle-2"></i></div>
+          <div>
+            <div class="stat-number">11 / 11</div>
+            <div class="stat-label">Active Tests Passing</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i data-lucide="zap"></i></div>
+          <div>
+            <div class="stat-number">1.83s</div>
+            <div class="stat-label">Average Suite Duration</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon purple"><i data-lucide="layers"></i></div>
+          <div>
+            <div class="stat-number">40+</div>
+            <div class="stat-label">Verified Assertions</div>
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon amber"><i data-lucide="lock"></i></div>
+          <div>
+            <div class="stat-number">100%</div>
+            <div class="stat-label">RBAC & Auth Coverage</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nav-tab active" onclick="switchTab('quickstart')"><i data-lucide="terminal"></i> Quick Start & CLI</button>
+      <button class="nav-tab" onclick="switchTab('architecture')"><i data-lucide="folder-tree"></i> Test Architecture</button>
+      <button class="nav-tab" onclick="switchTab('feature-testing')"><i data-lucide="cpu"></i> API Feature Testing</button>
+      <button class="nav-tab" onclick="switchTab('database-testing')"><i data-lucide="database"></i> Database & Transactions</button>
+      <button class="nav-tab" onclick="switchTab('matrix')"><i data-lucide="table"></i> Test Scenario Matrix</button>
+      <button class="nav-tab" onclick="switchTab('cheatsheet')"><i data-lucide="file-code-2"></i> Pest 3 Cheat Sheet</button>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 1: Quick Start & CLI -->
+    <!-- ========================================================================= -->
+    <div id="tab-quickstart" class="tab-content">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">1</div>
+          <div>
+            <h2 class="section-title">Running Tests via CLI</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Essential Artisan and Composer commands for testing execution.</p>
+          </div>
+        </div>
+
+        <p class="section-desc">
+          CNAT API comes pre-configured with script aliases in <code>composer.json</code> for seamless execution of both unit and feature suites.
+        </p>
+
+        <!-- Terminal Output Demo -->
+        <div class="terminal-box">
+          <div class="terminal-header">
+            <div class="terminal-dot red"></div>
+            <div class="terminal-dot yellow"></div>
+            <div class="terminal-dot green"></div>
+            <span class="terminal-title">bash — pest automated output</span>
+          </div>
+          <div class="terminal-line"><span class="prompt">$</span> <span class="out-white">composer test</span></div>
+          <div class="terminal-line"><span class="out-green"> PASS </span> <span class="out-white">Tests\Unit\SqlToSeederConverterTest</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ parses simple insert statement</span> <span class="out-muted" style="margin-left:auto;">0.01s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ handles null numbers escaped quotes and newlines</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ filters sql comments and ddl statements</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ generates valid php seeder code with chunks</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ generates raw sql seeder mode</span></div>
+          <div class="terminal-line"><span class="out-green"> PASS </span> <span class="out-white">Tests\Feature\AuthTest</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ user cannot login with invalid credentials</span> <span class="out-muted" style="margin-left:auto;">0.70s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ login is rate limited after 6 attempts</span> <span class="out-muted" style="margin-left:auto;">1.43s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ authenticated user can access profile</span> <span class="out-muted" style="margin-left:auto;">0.19s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ unauthenticated request to protected route returns 401 json</span> <span class="out-muted" style="margin-left:auto;">0.08s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ non-admin user cannot access user management endpoints</span> <span class="out-muted" style="margin-left:auto;">0.19s</span></div>
+          <div class="terminal-line"><span class="out-muted">  ✓ user can logout and revoke token</span> <span class="out-muted" style="margin-left:auto;">0.14s</span></div>
+          <div class="terminal-line" style="margin-top:0.75rem;"><span class="out-green">Tests: 11 passed (40 assertions)</span> &bull; <span class="out-muted">Duration: 3.20s</span></div>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-item">
+            <div class="step-header">
+              <span class="step-num">CMD 01</span>
+              <h3 class="step-name">Run Full Test Suite</h3>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:0.75rem;">Executes all Unit and Feature tests with color output.</p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>Terminal / PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>composer test</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-header">
+              <span class="step-num">CMD 02</span>
+              <h3 class="step-name">Run Specific Feature Test File</h3>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:0.75rem;">Target a single file to accelerate test-driven development (TDD).</p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>Terminal / PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>./vendor/bin/pest tests/Feature/AuthTest.php</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-header">
+              <span class="step-num">CMD 03</span>
+              <h3 class="step-name">Filter by Test Name</h3>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:0.75rem;">Run tests matching a specific description substring.</p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>Terminal / PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>./vendor/bin/pest --filter="rate limited"</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-header">
+              <span class="step-num">CMD 04</span>
+              <h3 class="step-name">Generate Code Coverage Report</h3>
+            </div>
+            <p style="color:var(--text-secondary); font-size:0.85rem; margin-bottom:0.75rem;">Generates full line-by-line coverage metrics (requires Xdebug or PCOV).</p>
+            <div class="code-box">
+              <div class="code-top">
+                <span>Terminal / PowerShell</span>
+                <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+              </div>
+              <pre><code>composer test:coverage</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <div class="callout-title"><i data-lucide="lightbulb"></i> Pro Tip: Parallel Testing for Instant Feedback</div>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">
+            When the test suite expands beyond 100 tests, execute Pest in parallel across all CPU cores with <code>./vendor/bin/pest --parallel</code> to cut execution time by over 70%.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 2: Architecture -->
+    <!-- ========================================================================= -->
+    <div id="tab-architecture" class="tab-content" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">2</div>
+          <div>
+            <h2 class="section-title">Directory Structure & Configuration</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">How the test environment is structured and bootstrapped.</p>
+          </div>
+        </div>
+
+        <div class="code-box">
+          <div class="code-top">
+            <span>Directory Tree</span>
+          </div>
+          <pre><code>tests/
+├── Feature/                     # High-level HTTP endpoint and workflow tests
+│   ├── AuthTest.php             # Authentication, throttling & RBAC permissions
+│   ├── StudentAdmissionTest.php # Student registration + admission workflows
+│   └── ReceiptCertificateTest.php # Fee vouchers, ledgers & certificate lookups
+├── Unit/                        # Isolated pure-PHP classes & converters
+│   └── SqlToSeederConverterTest.php
+├── Pest.php                     # Pest framework extension & hook configuration
+├── TestCase.php                 # Base Laravel TestCase setup
+└── phpunit.xml                  # Environment variables & SQLite memory setup</code></pre>
+        </div>
+
+        <h3 style="font-family:var(--font-heading); font-size:1.1rem; margin:1.5rem 0 0.5rem 0;">Bootstrap Configuration (Pest.php)</h3>
+        <p class="section-desc">
+          Located in <code>tests/Pest.php</code>, this file configures the test base classes and bindings for Feature and Unit directories.
+        </p>
+
+        <div class="code-box">
+          <div class="code-top">
+            <span>tests/Pest.php</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+          </div>
+          <pre><code>&lt;?php
+
+pest()->extend(Tests\TestCase::class)
+    ->in('Feature', 'Unit');
+</code></pre>
+        </div>
+
+        <h3 style="font-family:var(--font-heading); font-size:1.1rem; margin:1.5rem 0 0.5rem 0;">Testing Environment Variables (phpunit.xml)</h3>
+        <p class="section-desc">
+          Environment isolation prevents test executions from altering production database data:
+        </p>
+
+        <div class="code-box">
+          <div class="code-top">
+            <span>phpunit.xml</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+          </div>
+          <pre><code>&lt;php&gt;
+    &lt;env name="APP_ENV" value="testing"/&gt;
+    &lt;env name="BCRYPT_ROUNDS" value="4"/&gt;
+    &lt;env name="CACHE_STORE" value="array"/&gt;
+    &lt;env name="MAIL_MAILER" value="array"/&gt;
+    &lt;env name="QUEUE_CONNECTION" value="sync"/&gt;
+    &lt;env name="SESSION_DRIVER" value="array"/&gt;
+&lt;/php&gt;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 3: Feature Testing -->
+    <!-- ========================================================================= -->
+    <div id="tab-feature-testing" class="tab-content" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">3</div>
+          <div>
+            <h2 class="section-title">API Feature Testing Patterns</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Standard patterns for testing REST endpoints, tokens, roles, and JSON payloads.</p>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <!-- Pattern 1: Authentication -->
+          <div class="accordion-item active">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span>1. Sanctum Acting-As & Role Simulation</span>
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>Simulate authenticated users with specific roles without making live database network round-trips:</p>
+              <div class="code-box">
+                <div class="code-top">
+                  <span>tests/Feature/AuthTest.php</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+                <pre><code>test('authenticated user can access profile', function () {
+    $userType = UserType::firstOrCreate(
+        ['user_type_name' => 'Admin'],
+        ['user_type_name' => 'Admin']
+    );
+
+    $user = User::factory()->make([
+        'id'           => 99999,
+        'email'        => 'testadmin@example.com',
+        'user_type_id' => $userType->id,
+    ]);
+
+    Laravel\Sanctum\Sanctum::actingAs($user);
+
+    $response = $this->getJson('/api/me');
+
+    $response->assertStatus(200)
+        ->assertJson([
+            'status' => true,
+            'message' => 'User fetched',
+        ]);
+});</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pattern 2: Rate Limiting -->
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span>2. Rate Limiting & Throttling Verification (HTTP 429)</span>
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>Ensure that sensitive endpoints trigger HTTP 429 Too Many Requests after threshold breaches:</p>
+              <div class="code-box">
+                <div class="code-top">
+                  <span>Throttling Test Example</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+                <pre><code>test('login is rate limited after 6 attempts', function () {
+    for ($i = 0; $i < 6; $i++) {
+        $this->postJson('/api/login', [
+            'email'    => 'throttletest@example.com',
+            'password' => 'wrongpassword',
+        ]);
+    }
+
+    $response = $this->postJson('/api/login', [
+        'email'    => 'throttletest@example.com',
+        'password' => 'wrongpassword',
+    ]);
+
+    $response->assertStatus(429);
+});</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pattern 3: RBAC CheckRole 403 -->
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span>3. Role Authorization Protection (CheckRole 403)</span>
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>Verify that users with non-privileged roles are strictly blocked from Tier-1 administration routes:</p>
+              <div class="code-box">
+                <div class="code-top">
+                  <span>RBAC Test Example</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+                <pre><code>test('non-admin user cannot access user management endpoints', function () {
+    $studentType = UserType::firstOrCreate(
+        ['user_type_name' => 'Student'],
+        ['user_type_name' => 'Student']
+    );
+
+    $user = User::factory()->make([
+        'id'           => 99998,
+        'email'        => 'student@example.com',
+        'user_type_id' => $studentType->id,
+    ]);
+
+    Laravel\Sanctum\Sanctum::actingAs($user);
+
+    $response = $this->getJson('/api/users');
+    $response->assertStatus(403);
+});</code></pre>
+              </div>
+            </div>
+          </div>
+
+          <!-- Pattern 4: Unified JSON Exceptions -->
+          <div class="accordion-item">
+            <button class="accordion-toggle" onclick="toggleAccordion(this)">
+              <span>4. Unified JSON Exceptions (401, 404, 405)</span>
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="accordion-content">
+              <p>Verify that API requests always receive clean JSON error payloads instead of HTML stack traces:</p>
+              <div class="code-box">
+                <div class="code-top">
+                  <span>JSON Exception Test</span>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+                <pre><code>test('unauthenticated request to protected route returns 401 json', function () {
+    $response = $this->getJson('/api/me');
+    $response->assertStatus(401)
+        ->assertJson([
+            'status'  => false,
+            'message' => 'Unauthenticated. Please provide a valid Bearer token.',
+            'data'    => null,
+        ]);
+});</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 4: Database Testing -->
+    <!-- ========================================================================= -->
+    <div id="tab-database-testing" class="tab-content" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">4</div>
+          <div>
+            <h2 class="section-title">Database Integrity & Transaction Testing</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Testing database rollbacks, custom voucher sequence locking, and atomic multi-table inserts.</p>
+          </div>
+        </div>
+
+        <p class="section-desc">
+          CNAT API uses transaction isolation to execute atomic operations (such as registering a student, generating an admission number, and creating an initial fee receipt). Testing these transactions ensures that any exception cleanly rolls back all tables.
+        </p>
+
+        <div class="code-box">
+          <div class="code-top">
+            <span>Atomic Multi-Table Workflow Test</span>
+            <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+          </div>
+          <pre><code>test('can create student with admission and initial fee in one transaction', function () {
+    $admin = User::factory()->make(['user_type_id' => 1]);
+    Laravel\Sanctum\Sanctum::actingAs($admin);
+
+    $payload = [
+        'student' => [
+            'student_name' => 'Rahul Sharma',
+            'phone1'       => '9876543210',
+            'gender_id'    => 1,
+            'district_id'  => 1,
+        ],
+        'admission' => [
+            'course_id'       => 1,
+            'course_status_id'=> 1,
+            'fee_modes_id'    => 1,
+            'course_fees'     => 12000,
+            'admission_date'  => '2026-09-01',
+        ],
+        'fees' => [
+            'amount_paid'  => 3000,
+            'payment_mode' => 'Cash',
+        ]
+    ];
+
+    $response = $this->postJson('/api/admissions/admissionWithStudent', $payload);
+
+    $response->assertStatus(200)
+        ->assertJsonPath('status', true);
+
+    $this->assertDatabaseHas('students', ['student_name' => 'Rahul Sharma']);
+    $this->assertDatabaseHas('admissions', ['course_fees' => 12000]);
+    $this->assertDatabaseHas('simple_fees_receipts', ['amount_paid' => 3000]);
+});</code></pre>
+        </div>
+
+        <div class="callout warning">
+          <div class="callout-title"><i data-lucide="alert-triangle"></i> Safe Database Isolation Rule</div>
+          <p style="font-size:0.85rem; color:var(--text-secondary);">
+            Always wrap live test cases modifying database state with Laravel's <code>use Illuminate\Foundation\Testing\DatabaseTransactions;</code> trait so all inserted rows are automatically rolled back at the end of each test method.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 5: Scenario Matrix -->
+    <!-- ========================================================================= -->
+    <div id="tab-matrix" class="tab-content" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">5</div>
+          <div>
+            <h2 class="section-title">Master Test Scenario Matrix</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Exhaustive mapping of API modules to test assertions and expected status codes.</p>
+          </div>
+        </div>
+
+        <table class="matrix-table">
+          <thead>
+            <tr>
+              <th>Module</th>
+              <th>Endpoint Tested</th>
+              <th>Test Scenario</th>
+              <th>Priority</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Authentication</strong></td>
+              <td><code>POST /api/login</code></td>
+              <td>Reject invalid passwords with HTTP 401 JSON</td>
+              <td><span class="badge p0">P0</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Security</strong></td>
+              <td><code>POST /api/login</code></td>
+              <td>Block brute-force attacks after 6 attempts with 429</td>
+              <td><span class="badge p0">P0</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>RBAC</strong></td>
+              <td><code>GET /api/users</code></td>
+              <td>Deny non-admin users with 403 Forbidden</td>
+              <td><span class="badge p1">P1</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Profile</strong></td>
+              <td><code>GET /api/me</code></td>
+              <td>Return transformed user resource with active roles</td>
+              <td><span class="badge p1">P1</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Token Mgmt</strong></td>
+              <td><code>POST /api/logout</code></td>
+              <td>Revoke Bearer token on logout</td>
+              <td><span class="badge p1">P1</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Exceptions</strong></td>
+              <td><code>GET /api/me</code> (No Token)</td>
+              <td>Return unified JSON 401 Unauthenticated error</td>
+              <td><span class="badge p0">P0</span></td>
+              <td><span class="badge pass">PASSED</span></td>
+            </tr>
+            <tr>
+              <td><strong>Students</strong></td>
+              <td><code>POST /api/students</code></td>
+              <td>Sequential CNAT voucher registration number generation</td>
+              <td><span class="badge p1">P1</span></td>
+              <td><span class="badge p2">READY</span></td>
+            </tr>
+            <tr>
+              <td><strong>Admissions</strong></td>
+              <td><code>POST /api/admissions/admissionWithStudent</code></td>
+              <td>Atomic multi-table insert + initial receipt calculation</td>
+              <td><span class="badge p1">P1</span></td>
+              <td><span class="badge p2">READY</span></td>
+            </tr>
+            <tr>
+              <td><strong>Fees</strong></td>
+              <td><code>POST /api/fees-receipts</code></td>
+              <td>Monthly date span validation & auto receipt number</td>
+              <td><span class="badge p2">P2</span></td>
+              <td><span class="badge p2">READY</span></td>
+            </tr>
+            <tr>
+              <td><strong>Certificates</strong></td>
+              <td><code>GET /api/certificates/{num}</code></td>
+              <td>Public verification lookup by certificate number</td>
+              <td><span class="badge p2">P2</span></td>
+              <td><span class="badge p2">READY</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ========================================================================= -->
+    <!-- TAB 6: Cheat Sheet -->
+    <!-- ========================================================================= -->
+    <div id="tab-cheatsheet" class="tab-content" style="display:none;">
+      <div class="section-card">
+        <div class="section-header">
+          <div class="section-badge">6</div>
+          <div>
+            <h2 class="section-title">Pest 3.x Assertion Cheat Sheet</h2>
+            <p style="color:var(--text-muted); font-size:0.85rem;">Quick reference for high-speed assertions in Pest and Laravel testing.</p>
+          </div>
+        </div>
+
+        <div class="steps-grid">
+          <div class="step-item">
+            <h3 class="step-name" style="margin-bottom:0.75rem;">HTTP Response Assertions</h3>
+            <div class="code-box">
+              <pre><code>$response->assertStatus(200);
+$response->assertOk();
+$response->assertCreated(); // 201
+$response->assertUnauthorized(); // 401
+$response->assertForbidden(); // 403
+$response->assertNotFound(); // 404
+$response->assertUnprocessable(); // 422
+$response->assertTooManyRequests(); // 429</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <h3 class="step-name" style="margin-bottom:0.75rem;">JSON Payload Assertions</h3>
+            <div class="code-box">
+              <pre><code>$response->assertJson(['status' => true]);
+$response->assertJsonPath('data.user.email', 'user@example.com');
+$response->assertJsonStructure([
+    'status',
+    'message',
+    'data' => ['token', 'user' => ['id', 'email']]
+]);
+$response->assertJsonCount(5, 'data');</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <h3 class="step-name" style="margin-bottom:0.75rem;">Higher-Order Expectations</h3>
+            <div class="code-box">
+              <pre><code>expect($value)->toBe(100);
+expect($user->email)->toBeString()->toContain('@');
+expect($array)->toHaveCount(3);
+expect($user)->toBeInstanceOf(App\Models\User::class);
+expect($fn)->toThrow(InvalidArgumentException::class);</code></pre>
+            </div>
+          </div>
+
+          <div class="step-item">
+            <h3 class="step-name" style="margin-bottom:0.75rem;">Database Assertions</h3>
+            <div class="code-box">
+              <pre><code>$this->assertDatabaseHas('users', ['email' => 'admin@cnat.com']);
+$this->assertDatabaseMissing('users', ['email' => 'deleted@cnat.com']);
+$this->assertDatabaseCount('students', 10);
+$this->assertModelExists($student);</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>CNAT API — Master Automated Testing Architecture &bull; Laravel 12.x &bull; PHP 8.4 &bull; Pest 3.x</p>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // Theme Toggle
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const newTheme = current === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', newTheme);
+      const icon = document.getElementById('themeIcon');
+      icon.setAttribute('data-lucide', newTheme === 'light' ? 'moon' : 'sun');
+      lucide.createIcons();
+    }
+
+    // Switch Tabs
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+      
+      const target = document.getElementById('tab-' + tabId);
+      if (target) {
+        target.style.display = 'block';
+      }
+      
+      const activeBtn = Array.from(document.querySelectorAll('.nav-tab')).find(b => b.getAttribute('onclick').includes(tabId));
+      if (activeBtn) {
+        activeBtn.classList.add('active');
+      }
+      lucide.createIcons();
+    }
+
+    // Accordion Toggle
+    function toggleAccordion(btn) {
+      const item = btn.closest('.accordion-item');
+      item.classList.toggle('active');
+      lucide.createIcons();
+    }
+
+    // Copy Code
+    function copyCode(btn) {
+      const code = btn.closest('.code-box').querySelector('pre code').innerText;
+      navigator.clipboard.writeText(code).then(() => {
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+        btn.style.color = 'var(--accent-emerald)';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = orig;
+          btn.style.color = '';
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    // Search
+    function searchDoc() {
+      const q = document.getElementById('docSearch').value.toLowerCase();
+      if (!q) return;
+
+      // Show all tabs when searching
+      document.querySelectorAll('.tab-content').forEach(el => {
+        el.style.display = 'block';
+      });
+
+      document.querySelectorAll('.section-card, .step-item, .accordion-item').forEach(el => {
+        const text = el.innerText.toLowerCase();
+        el.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+  </script>
+</body>
+</html>

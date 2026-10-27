@@ -1,0 +1,1739 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-14",
+  "__export_source": "bharat_api.routes.api",
+  "resources": [
+    {
+      "_id": "wrk_bharat",
+      "_type": "workspace",
+      "name": "BHARAT API",
+      "description": "Complete BHARAT API collection. Set environment to \"BHARAT Local (WAMP)\", execute POST /login, and copy the Bearer token into the \"token\" environment variable.",
+      "scope": "collection"
+    },
+    {
+      "_id": "env_bharat",
+      "_type": "environment",
+      "parentId": "wrk_bharat",
+      "name": "BHARAT Local (WAMP)",
+      "data": {
+        "base_url": "http://localhost/bharat_api/public/api",
+        "token": "{% response 'body', 'req_login', 'b64::JC5kYXRhLnRva2Vu::46b', 'never', 60 %}"
+      }
+    },
+    {
+      "_id": "jar_bharat",
+      "_type": "cookie_jar",
+      "parentId": "wrk_bharat",
+      "name": "Default Jar",
+      "cookies": []
+    },
+    {
+      "_id": "fld_pub",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "PUBLIC (No Auth)",
+      "description": "Public unauthenticated endpoints."
+    },
+    {
+      "_id": "req_login",
+      "_type": "request",
+      "parentId": "fld_pub",
+      "name": "POST /login — Authenticate",
+      "method": "POST",
+      "url": "{{ base_url }}/login",
+      "description": "Authenticate user with email/username and password. Automatically extracts Sanctum Bearer token for all requests in collection. Rate limited to 6 attempts/minute.",
+      "headers": [
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"sukantahui\",\n  \"password\": \"Cnat@1977\"\n}"
+      },
+      "afterResponseScript": "const res = insomnia.response.json();\nif (res && res.data && res.data.token) {\n  insomnia.environment.set('token', res.data.token);\n}"
+    },
+    {
+      "_id": "fld_auth",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "AUTH Self-Service (All Users)",
+      "description": "Session and profile self-service endpoints for any authenticated user."
+    },
+    {
+      "_id": "req_me",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "GET /me — Current User Profile",
+      "method": "GET",
+      "url": "{{ base_url }}/me",
+      "description": "Fetch current authenticated user profile formatted via UserResource (includes employee, department, designation, and userType).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_me2",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "GET /me2 — Extended User Info",
+      "method": "GET",
+      "url": "{{ base_url }}/me2",
+      "description": "Fetch raw Eloquent model representation of currently authenticated user.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_logout",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "POST /logout — Revoke Current Token",
+      "method": "POST",
+      "url": "{{ base_url }}/logout",
+      "description": "Signs out the current user session by revoking the Sanctum personal access token.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_revoke",
+      "_type": "request",
+      "parentId": "fld_auth",
+      "name": "GET /revokeAll — Sign Out Everywhere",
+      "method": "GET",
+      "url": "{{ base_url }}/revokeAll",
+      "description": "Revokes all active Sanctum tokens across all devices/sessions for the authenticated user.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_ref",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "Reference & Master Data (All Auth Users)",
+      "description": "Lookup lists and reference entities available to all authenticated users."
+    },
+    {
+      "_id": "req_utypes",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /user-types — List Roles",
+      "method": "GET",
+      "url": "{{ base_url }}/user-types",
+      "description": "List all system roles / user types (Admin, Developer, Owner, Manager, Teacher, Manager Sale, Worker, Student).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_desig",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /designations — List Designations",
+      "method": "GET",
+      "url": "{{ base_url }}/designations",
+      "description": "List all employee designations in the organization.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_genders",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /genders — List Genders",
+      "method": "GET",
+      "url": "{{ base_url }}/genders",
+      "description": "List all gender options.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_states_list",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /states — List All States",
+      "method": "GET",
+      "url": "{{ base_url }}/states",
+      "description": "Retrieve list of all states formatted via StateResource.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_state_show",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /states/{stateId} — Show Single State",
+      "method": "GET",
+      "url": "{{ base_url }}/states/1",
+      "description": "Fetch single state details by numeric state ID.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_districts",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /districts — List All Districts",
+      "method": "GET",
+      "url": "{{ base_url }}/districts",
+      "description": "Retrieve all districts across all states.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_districts_filtered",
+      "_type": "request",
+      "parentId": "fld_ref",
+      "name": "GET /districts?state_id={id} — Filter Districts by State",
+      "method": "GET",
+      "url": "{{ base_url }}/districts?state_id=1",
+      "description": "Filter districts belonging to a specific state by query param `state_id`.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_t1",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "TIER 1 — Administration (Admin, Developer, Owner)",
+      "description": "Restricted administrative endpoints guarded by role middleware: role:Admin,Developer,Owner"
+    },
+    {
+      "_id": "fld_users",
+      "_type": "request_group",
+      "parentId": "fld_t1",
+      "name": "User Management",
+      "description": "User listing and provisioning."
+    },
+    {
+      "_id": "req_users_list",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "GET /users — List All Users",
+      "method": "GET",
+      "url": "{{ base_url }}/users",
+      "description": "Retrieve all registered users ordered by ID desc with userType, employee, department, and designation relations.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_users_reg",
+      "_type": "request",
+      "parentId": "fld_users",
+      "name": "POST /users — Register / Provision User",
+      "method": "POST",
+      "url": "{{ base_url }}/users",
+      "description": "Admin-provisioned user creation. Validates unique email, password confirmation, user_type_id, and optional employee_id. Throttled at 10 requests/min.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"email\": \"newemployee@example.com\",\n  \"password\": \"Password@123\",\n  \"password_confirmation\": \"Password@123\",\n  \"user_type_id\": 1,\n  \"employee_id\": 1\n}"
+      }
+    },
+    {
+      "_id": "fld_depts",
+      "_type": "request_group",
+      "parentId": "fld_t1",
+      "name": "Department Management",
+      "description": "Department CRUD operations."
+    },
+    {
+      "_id": "req_dept_list",
+      "_type": "request",
+      "parentId": "fld_depts",
+      "name": "GET /departments — List Departments",
+      "method": "GET",
+      "url": "{{ base_url }}/departments",
+      "description": "List all organization departments.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_dept_create",
+      "_type": "request",
+      "parentId": "fld_depts",
+      "name": "POST /departments — Create Department",
+      "method": "POST",
+      "url": "{{ base_url }}/departments",
+      "description": "Create a new department. Converts camelCase (departmentName) to snake_case (department_name) automatically.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"department_name\": \"Human Resources\"\n}"
+      }
+    },
+    {
+      "_id": "req_dept_update",
+      "_type": "request",
+      "parentId": "fld_depts",
+      "name": "PUT /departments — Update Department",
+      "method": "PUT",
+      "url": "{{ base_url }}/departments",
+      "description": "Update department name by department ID passed in JSON body.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"id\": 1,\n  \"departmentName\": \"HR & People Operations\"\n}"
+      }
+    },
+    {
+      "_id": "fld_emps",
+      "_type": "request_group",
+      "parentId": "fld_t1",
+      "name": "Employee Management",
+      "description": "Employee lifecycle and records management."
+    },
+    {
+      "_id": "req_emp_list",
+      "_type": "request",
+      "parentId": "fld_emps",
+      "name": "GET /employees — List Employees",
+      "method": "GET",
+      "url": "{{ base_url }}/employees",
+      "description": "List all employees with nested department and designation relations.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_emp_show",
+      "_type": "request",
+      "parentId": "fld_emps",
+      "name": "GET /employees/{id} — Show Employee Details",
+      "method": "GET",
+      "url": "{{ base_url }}/employees/1",
+      "description": "Fetch details of a single employee by numeric ID.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_emp_create",
+      "_type": "request",
+      "parentId": "fld_emps",
+      "name": "POST /employees — Create Employee",
+      "method": "POST",
+      "url": "{{ base_url }}/employees",
+      "description": "Store a new employee inside database transaction. Converts camelCase inputs to snake_case.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"employee_name\": \"Rahul Sharma\",\n  \"department_id\": 1,\n  \"designation_id\": 1,\n  \"mobile\": \"9876543210\",\n  \"email\": \"rahul.sharma@example.com\"\n}"
+      }
+    },
+    {
+      "_id": "req_emp_update",
+      "_type": "request",
+      "parentId": "fld_emps",
+      "name": "PUT /employees/{employeeId} — Update Employee",
+      "method": "PUT",
+      "url": "{{ base_url }}/employees/1",
+      "description": "Update employee fields by route param employeeId.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"employee_name\": \"Rahul Sharma (Updated)\",\n  \"department_id\": 1,\n  \"designation_id\": 1,\n  \"mobile\": \"9876543210\",\n  \"email\": \"rahul.sharma@example.com\"\n}"
+      }
+    },
+    {
+      "_id": "req_emp_delete",
+      "_type": "request",
+      "parentId": "fld_emps",
+      "name": "DELETE /employees/{employeeId} — Delete Employee",
+      "method": "DELETE",
+      "url": "{{ base_url }}/employees/1",
+      "description": "Delete employee record. Returns 409 Conflict if employee has active user accounts linked.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_states_mgmt",
+      "_type": "request_group",
+      "parentId": "fld_t1",
+      "name": "State Management",
+      "description": "Administrative state creation."
+    },
+    {
+      "_id": "req_state_create",
+      "_type": "request",
+      "parentId": "fld_states_mgmt",
+      "name": "POST /states — Create New State",
+      "method": "POST",
+      "url": "{{ base_url }}/states",
+      "description": "Create a state record with unique state_code (numeric) and state_name.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"state_code\": 19,\n  \"state_name\": \"West Bengal\"\n}"
+      }
+    },
+    {
+      "_id": "fld_backups",
+      "_type": "request_group",
+      "parentId": "fld_t1",
+      "name": "Database Backups",
+      "description": "MySQL .sql dump backups management (storage/app/backups)."
+    },
+    {
+      "_id": "req_backups_list",
+      "_type": "request",
+      "parentId": "fld_backups",
+      "name": "GET /backups — List All Backups",
+      "method": "GET",
+      "url": "{{ base_url }}/backups",
+      "description": "Lists all available MySQL .sql dump files in storage/app/backups/ sorted newest first with human-readable size.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_backups_create",
+      "_type": "request",
+      "parentId": "fld_backups",
+      "name": "POST /backups — Generate SQL Backup",
+      "method": "POST",
+      "url": "{{ base_url }}/backups",
+      "description": "Executes mysqldump to create a new timestamped .sql backup. Throttled at 3 attempts per minute.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_backups_download",
+      "_type": "request",
+      "parentId": "fld_backups",
+      "name": "GET /backups/{filename} — Download Backup File",
+      "method": "GET",
+      "url": "{{ base_url }}/backups/bharat_db_backup_YYYY-MM-DD_HH-MM-SS.sql",
+      "description": "Download the specified .sql backup file stream.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_backups_delete_one",
+      "_type": "request",
+      "parentId": "fld_backups",
+      "name": "DELETE /backups/{filename} — Delete Single Backup",
+      "method": "DELETE",
+      "url": "{{ base_url }}/backups/bharat_db_backup_YYYY-MM-DD_HH-MM-SS.sql",
+      "description": "Permanently deletes a single .sql backup file from disk.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_backups_delete_all",
+      "_type": "request",
+      "parentId": "fld_backups",
+      "name": "DELETE /backups — Delete All Backups",
+      "method": "DELETE",
+      "url": "{{ base_url }}/backups",
+      "description": "Deletes all database backup files on disk. Requires confirmation payload {\"confirm\": true}.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"confirm\": true\n}"
+      }
+    },
+    {
+      "_id": "fld_j_profile",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "1. Business Profile & GST Settings",
+      "description": "Jewellery shop trade details, legal name, GSTIN, HSN configuration, and tax settings."
+    },
+    {
+      "_id": "req_j_profile_get",
+      "_type": "request",
+      "parentId": "fld_j_profile",
+      "name": "GET /business-profile — Show Shop Profile",
+      "method": "GET",
+      "url": "{{ base_url }}/business-profile",
+      "description": "Fetch organization legal name, trade name, GSTIN, default gold/silver GST rates, address, and contact details.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_profile_put",
+      "_type": "request",
+      "parentId": "fld_j_profile",
+      "name": "PUT /business-profile — Update Shop Profile & GST",
+      "method": "PUT",
+      "url": "{{ base_url }}/business-profile",
+      "description": "Update business profile, toggle GST registered status, update GSTIN, pan, or gold tax rate.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"business_name\": \"Bharat Jewellers Pvt Ltd\",\n  \"trade_name\": \"Bharat Jewellers\",\n  \"is_gst_registered\": true,\n  \"gstin\": \"19AAACB1234F1Z6\",\n  \"pan_number\": \"AAACB1234F\",\n  \"state_id\": 1,\n  \"state_code\": 19,\n  \"city\": \"Kolkata\",\n  \"address_line1\": \"123 Bowbazar Gold Market\",\n  \"pincode\": \"700012\",\n  \"phone\": \"9830012345\",\n  \"email\": \"info@bharatjewellers.com\",\n  \"gold_gst_rate\": 3,\n  \"silver_gst_rate\": 3,\n  \"making_gst_rate\": 5\n}"
+      }
+    },
+    {
+      "_id": "fld_j_masters",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "2. Jewellery Masters (Purities & Rates)",
+      "description": "Gold purities (24K, 22K/916, 18K/750), categories (Rings, Necklaces), and live daily gold board rates."
+    },
+    {
+      "_id": "req_j_purities_list",
+      "_type": "request",
+      "parentId": "fld_j_masters",
+      "name": "GET /purities — List Standard Gold Purities",
+      "method": "GET",
+      "url": "{{ base_url }}/purities",
+      "description": "Lists all hallmark purity standards (24K - 99.9%, 22K - 91.6%, 18K - 75.0%, 14K - 58.5%).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_categories_list",
+      "_type": "request",
+      "parentId": "fld_j_masters",
+      "name": "GET /jewellery-categories — List Jewellery Categories",
+      "method": "GET",
+      "url": "{{ base_url }}/jewellery-categories",
+      "description": "Lists all jewellery product categories (Rings, Necklaces, Bangles, Chains, Earrings, Bullion Coins/Bars).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_rates_today",
+      "_type": "request",
+      "parentId": "fld_j_masters",
+      "name": "GET /daily-gold-rates/today — Today Gold Board Rates",
+      "method": "GET",
+      "url": "{{ base_url }}/daily-gold-rates/today",
+      "description": "Fetch active daily gold selling and buyback rates for 24K, 22K/916, 18K.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_rates_list",
+      "_type": "request",
+      "parentId": "fld_j_masters",
+      "name": "GET /daily-gold-rates — History of Board Rates",
+      "method": "GET",
+      "url": "{{ base_url }}/daily-gold-rates",
+      "description": "Historical board rates filterable by date range.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_rates_post",
+      "_type": "request",
+      "parentId": "fld_j_masters",
+      "name": "POST /daily-gold-rates — Set Today Gold Board Rate",
+      "method": "POST",
+      "url": "{{ base_url }}/daily-gold-rates",
+      "description": "Publish morning gold rates for 22K 916 Hallmark or 24K pure bullion.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"rate_date\": \"2026-10-13\",\n  \"metal_type\": \"gold\",\n  \"purity_id\": 2,\n  \"rate_per_gram\": 7350,\n  \"buyback_rate_per_gram\": 7050\n}"
+      }
+    },
+    {
+      "_id": "fld_j_parties",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "3. Parties (Customers & Vendors)",
+      "description": "Manage Retail Customers, B2B Registered Jewelers, Bullion Merchants, and Karigars with balances and PAN/GSTIN."
+    },
+    {
+      "_id": "req_j_parties_list",
+      "_type": "request",
+      "parentId": "fld_j_parties",
+      "name": "GET /parties — List Parties",
+      "method": "GET",
+      "url": "{{ base_url }}/parties?type=customer",
+      "description": "Filter parties by type (customer, vendor, karigar) or search query.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_parties_create_cust",
+      "_type": "request",
+      "parentId": "fld_j_parties",
+      "name": "POST /parties — Create Customer / Party",
+      "method": "POST",
+      "url": "{{ base_url }}/parties",
+      "description": "Create a new customer with PAN, mobile, and state code.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"party_type\": \"customer\",\n  \"party_name\": \"Amitava Roy\",\n  \"phone\": \"9831122334\",\n  \"pan_number\": \"ABCDE1234F\",\n  \"state_id\": 1,\n  \"state_code\": 19,\n  \"city\": \"Kolkata\",\n  \"opening_balance\": 0\n}"
+      }
+    },
+    {
+      "_id": "req_j_parties_show",
+      "_type": "request",
+      "parentId": "fld_j_parties",
+      "name": "GET /parties/{id} — Show Party Details",
+      "method": "GET",
+      "url": "{{ base_url }}/parties/1",
+      "description": "View party details including current ledger receivable/payable balance.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_parties_update",
+      "_type": "request",
+      "parentId": "fld_j_parties",
+      "name": "PUT /parties/{id} — Update Party",
+      "method": "PUT",
+      "url": "{{ base_url }}/parties/1",
+      "description": "Update party contact information, GSTIN, or address.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"party_name\": \"Amitava Roy\",\n  \"phone\": \"9831122334\",\n  \"email\": \"amitava.roy@example.com\",\n  \"pan_number\": \"ABCDE1234F\"\n}"
+      }
+    },
+    {
+      "_id": "fld_j_items",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "4. Jewellery Stock Items & Tags",
+      "description": "Individual tagged jewellery pieces with Gross/Stone/Net/Fine weights, Hallmark HUID, making charges, and status."
+    },
+    {
+      "_id": "req_j_items_list",
+      "_type": "request",
+      "parentId": "fld_j_items",
+      "name": "GET /jewellery-items — List Jewellery Stock",
+      "method": "GET",
+      "url": "{{ base_url }}/jewellery-items?status=in_stock",
+      "description": "Filter stock by status (in_stock, sold, under_repair), category_id, purity_id, or search.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_items_by_tag",
+      "_type": "request",
+      "parentId": "fld_j_items",
+      "name": "GET /jewellery-items/tag/{tagCode} — Scan Barcode Tag",
+      "method": "GET",
+      "url": "{{ base_url }}/jewellery-items/tag/RNG-2026-0001",
+      "description": "Instant lookup for POS barcode scanner or RFID scanner during billing.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_items_create",
+      "_type": "request",
+      "parentId": "fld_j_items",
+      "name": "POST /jewellery-items — Create Tagged Ornament",
+      "method": "POST",
+      "url": "{{ base_url }}/jewellery-items",
+      "description": "Tag and register an individual gold ornament with weights, making charge structure, and BIS HUID.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"category_id\": 1,\n  \"purity_id\": 2,\n  \"tag_code\": \"RNG-2026-0001\",\n  \"item_name\": \"22K Traditional Floral Gold Ring\",\n  \"hsn_code\": \"7113\",\n  \"gross_weight\": 5.62,\n  \"stone_weight\": 0.12,\n  \"stone_charge\": 350,\n  \"making_charge_type\": \"per_gram\",\n  \"making_charge_rate\": 650,\n  \"huid\": \"AB12CD\",\n  \"status\": \"in_stock\"\n}"
+      }
+    },
+    {
+      "_id": "req_j_items_show",
+      "_type": "request",
+      "parentId": "fld_j_items",
+      "name": "GET /jewellery-items/{id} — View Ornament Info",
+      "method": "GET",
+      "url": "{{ base_url }}/jewellery-items/1",
+      "description": "Retrieve full weight breakdown, fine gold content, and current status.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_stock",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "5. Stock Entries (Production Inward)",
+      "description": "Directly add finished jewellery into showroom stock from production/workshop without tracking complex manufacturing steps."
+    },
+    {
+      "_id": "req_j_stock_list",
+      "_type": "request",
+      "parentId": "fld_j_stock",
+      "name": "GET /stock-entries — List Stock Inward Batches",
+      "method": "GET",
+      "url": "{{ base_url }}/stock-entries",
+      "description": "Lists all production inward entries and opening stock batches.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_stock_create",
+      "_type": "request",
+      "parentId": "fld_j_stock",
+      "name": "POST /stock-entries — Add Jewellery Stock from Production",
+      "method": "POST",
+      "url": "{{ base_url }}/stock-entries",
+      "description": "Inward finished jewellery from workshop into showroom stock with automatic generation of tag codes and JewelleryItem records.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"entry_date\": \"2026-10-13\",\n  \"entry_type\": \"production_inward\",\n  \"notes\": \"Inward from local karigar workshop batch #44\",\n  \"items\": [\n    {\n      \"category_id\": 1,\n      \"purity_id\": 2,\n      \"item_name\": \"22K Designer Solitaire Ring\",\n      \"tag_code\": \"RNG-2026-0002\",\n      \"pieces\": 1,\n      \"gross_weight\": 4.85,\n      \"stone_weight\": 0.05,\n      \"making_charge_type\": \"per_gram\",\n      \"making_charge_rate\": 650,\n      \"huid\": \"XY8899\"\n    },\n    {\n      \"category_id\": 2,\n      \"purity_id\": 2,\n      \"item_name\": \"22K Royal Temple Choker Necklace\",\n      \"tag_code\": \"NCK-2026-0001\",\n      \"pieces\": 1,\n      \"gross_weight\": 28.45,\n      \"stone_weight\": 1.2,\n      \"making_charge_type\": \"percentage\",\n      \"making_charge_rate\": 14,\n      \"huid\": \"TMP776\"\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_j_stock_show",
+      "_type": "request",
+      "parentId": "fld_j_stock",
+      "name": "GET /stock-entries/{id} — Show Batch Details",
+      "method": "GET",
+      "url": "{{ base_url }}/stock-entries/1",
+      "description": "View items and weights entered in this stock batch.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_purchases",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "6. Purchases & Procurement",
+      "description": "Vendor bullion purchasing, finished ornament procurement, old gold scrap buyback, and GST Input Tax Credit (ITC)."
+    },
+    {
+      "_id": "req_j_purchases_list",
+      "_type": "request",
+      "parentId": "fld_j_purchases",
+      "name": "GET /purchases — List Purchase Bills",
+      "method": "GET",
+      "url": "{{ base_url }}/purchases",
+      "description": "Filter purchases by vendor, bill date range, or payment status.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_purchases_create",
+      "_type": "request",
+      "parentId": "fld_j_purchases",
+      "name": "POST /purchases — Create Gold Purchase Bill",
+      "method": "POST",
+      "url": "{{ base_url }}/purchases",
+      "description": "Procure gold bars, ornaments, or old gold scrap. Automatically posts double-entry vouchers and updates vendor payables.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"bill_number\": \"BILL-VEND-101\",\n  \"bill_date\": \"2026-10-13\",\n  \"purchase_type\": \"finished_jewellery\",\n  \"party_id\": 1,\n  \"is_gst_applicable\": true,\n  \"tax_type\": \"intra_state\",\n  \"auto_create_items\": true,\n  \"paid_amount\": 50000,\n  \"payment_mode\": \"bank_transfer\",\n  \"payment_account_id\": 2,\n  \"items\": [\n    {\n      \"category_id\": 4,\n      \"purity_id\": 2,\n      \"item_description\": \"22K Handmade Rope Chain\",\n      \"tag_code\": \"CHN-2026-0001\",\n      \"gross_weight\": 12.5,\n      \"stone_weight\": 0,\n      \"rate_per_gram\": 7100,\n      \"making_charges\": 4200,\n      \"gst_rate\": 3\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_j_purchases_show",
+      "_type": "request",
+      "parentId": "fld_j_purchases",
+      "name": "GET /purchases/{id} — Show Purchase Bill",
+      "method": "GET",
+      "url": "{{ base_url }}/purchases/1",
+      "description": "View items, weights, GST breakdown, and vendor ledger status.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_purchases_cancel",
+      "_type": "request",
+      "parentId": "fld_j_purchases",
+      "name": "POST /purchases/{id}/cancel — Cancel Purchase Bill",
+      "method": "POST",
+      "url": "{{ base_url }}/purchases/1/cancel",
+      "description": "Cancel purchase bill and reverse vendor payable and stock.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_sales",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "7. Sales & POS Billing",
+      "description": "Showroom retail billing, barcode tag scanning, old gold customer trade-in adjustments, PAN compliance, and cash drawer updates."
+    },
+    {
+      "_id": "req_j_sales_list",
+      "_type": "request",
+      "parentId": "fld_j_sales",
+      "name": "GET /sales — List Sales Invoices",
+      "method": "GET",
+      "url": "{{ base_url }}/sales",
+      "description": "View sales invoices filterable by party, date, and payment status.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_sales_create",
+      "_type": "request",
+      "parentId": "fld_j_sales",
+      "name": "POST /sales — Create POS Tax Invoice (with Old Gold Exchange)",
+      "method": "POST",
+      "url": "{{ base_url }}/sales",
+      "description": "Complete sales invoice generation: sells tagged item, deducts from showroom inventory, credits customer old gold exchange, collects cash, and enforces PAN compliance if cash >= 2 Lakhs.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"invoice_date\": \"2026-10-13\",\n  \"invoice_type\": \"retail_b2c\",\n  \"party_id\": null,\n  \"customer_name\": \"Rajesh Mukherjee\",\n  \"customer_mobile\": \"9830112233\",\n  \"customer_pan\": \"ABCDE9999M\",\n  \"is_gst_applicable\": true,\n  \"payment_status\": \"paid\",\n  \"payment_mode\": \"cash\",\n  \"deposit_account_id\": 1,\n  \"paid_amount\": 35000,\n  \"items\": [\n    {\n      \"jewellery_item_id\": 1,\n      \"category_id\": 1,\n      \"purity_id\": 2,\n      \"item_name\": \"22K Traditional Floral Gold Ring\",\n      \"tag_code\": \"RNG-2026-0001\",\n      \"gross_weight\": 5.62,\n      \"stone_weight\": 0.12,\n      \"rate_per_gram\": 7350,\n      \"making_charge_type\": \"per_gram\",\n      \"making_charge_rate\": 650,\n      \"stone_charges\": 350,\n      \"discount_amount\": 0,\n      \"gst_rate\": 3\n    }\n  ],\n  \"old_gold_exchanges\": [\n    {\n      \"purity_id\": 2,\n      \"item_description\": \"Old 22K Broken Ring traded-in\",\n      \"gross_weight\": 1.5,\n      \"dust_weight\": 0.05,\n      \"rate_per_gram\": 7050\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_j_sales_show",
+      "_type": "request",
+      "parentId": "fld_j_sales",
+      "name": "GET /sales/{id} — Show Sales Tax Invoice",
+      "method": "GET",
+      "url": "{{ base_url }}/sales/1",
+      "description": "Retrieve full printable invoice details with CGST/SGST/IGST breakdown and old gold trade-in voucher.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_sales_cancel",
+      "_type": "request",
+      "parentId": "fld_j_sales",
+      "name": "POST /sales/{id}/cancel — Cancel Sale Invoice",
+      "method": "POST",
+      "url": "{{ base_url }}/sales/1/cancel",
+      "description": "Cancel sale invoice and restock items back into showroom inventory.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_returns",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "8. Sales Returns (Credit Notes)",
+      "description": "Customer returns, GST reversal, stock restocking or melting scrap, and cash/store credit refunds (GSTR-1 Table 9B)."
+    },
+    {
+      "_id": "req_j_returns_list",
+      "_type": "request",
+      "parentId": "fld_j_returns",
+      "name": "GET /sales-returns — List Credit Notes",
+      "method": "GET",
+      "url": "{{ base_url }}/sales-returns",
+      "description": "Lists all issued credit notes and sales returns with original invoice references.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_returns_create",
+      "_type": "request",
+      "parentId": "fld_j_returns",
+      "name": "POST /sales-returns — Issue Credit Note / Sales Return",
+      "method": "POST",
+      "url": "{{ base_url }}/sales-returns",
+      "description": "Issue credit note for returned ornament with stock restock/scrap action, tax reversal, and cash or store credit refund.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"credit_note_date\": \"2026-10-13\",\n  \"sale_id\": 1,\n  \"refund_mode\": \"cash_refund\",\n  \"refund_account_id\": 1,\n  \"return_reason\": \"size_issue\",\n  \"notes\": \"Customer returned ring due to finger size difference\",\n  \"items\": [\n    {\n      \"sale_item_id\": 1,\n      \"jewellery_item_id\": 1,\n      \"category_id\": 1,\n      \"purity_id\": 2,\n      \"item_name\": \"22K Traditional Floral Gold Ring\",\n      \"tag_code\": \"RNG-2026-0001\",\n      \"gross_weight\": 5.62,\n      \"stone_weight\": 0.12,\n      \"rate_per_gram\": 7350,\n      \"making_charges_refunded\": 3500,\n      \"stone_charges_refunded\": 350,\n      \"gst_rate\": 3,\n      \"stock_action\": \"restocked_as_original\"\n    }\n  ]\n}"
+      }
+    },
+    {
+      "_id": "req_j_returns_show",
+      "_type": "request",
+      "parentId": "fld_j_returns",
+      "name": "GET /sales-returns/{id} — Show Credit Note",
+      "method": "GET",
+      "url": "{{ base_url }}/sales-returns/1",
+      "description": "View credit note details, tax reversal figures, and stock restock status.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_accounts",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "9. Accounts & Cash Drawer",
+      "description": "Chart of accounts, liquid cash-in-hand drawer balance, bank balances, and double-entry ledger statements."
+    },
+    {
+      "_id": "req_j_accounts_drawer",
+      "_type": "request",
+      "parentId": "fld_j_accounts",
+      "name": "GET /accounts/drawer/cash-summary — Daily Cash Drawer Balance",
+      "method": "GET",
+      "url": "{{ base_url }}/accounts/drawer/cash-summary",
+      "description": "Real-time jewellery shop cash-in-hand balance, bank accounts balance, today cash inflow, today cash outflow, and net cash movement.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_accounts_list",
+      "_type": "request",
+      "parentId": "fld_j_accounts",
+      "name": "GET /accounts — List Chart of Accounts",
+      "method": "GET",
+      "url": "{{ base_url }}/accounts",
+      "description": "Lists all general ledger accounts (Assets, Liabilities, Equity, Incomes, Expenses).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_accounts_show",
+      "_type": "request",
+      "parentId": "fld_j_accounts",
+      "name": "GET /accounts/{id} — Show Account Details",
+      "method": "GET",
+      "url": "{{ base_url }}/accounts/1",
+      "description": "View account details and current balance.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_accounts_statement",
+      "_type": "request",
+      "parentId": "fld_j_accounts",
+      "name": "GET /accounts/{id}/statement — Account Ledger Statement",
+      "method": "GET",
+      "url": "{{ base_url }}/accounts/1/statement",
+      "description": "View voucher entries, debit/credit movements, and opening/closing balances for any account over a date range.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_payments",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "10. Cash & Bank Book (Payments/Receipts)",
+      "description": "Record customer money receipts, vendor payments, bank transfers, and cash collections."
+    },
+    {
+      "_id": "req_j_payments_list",
+      "_type": "request",
+      "parentId": "fld_j_payments",
+      "name": "GET /payments — List Payments & Receipts",
+      "method": "GET",
+      "url": "{{ base_url }}/payments",
+      "description": "Filter transactions by type (receipt or payment), mode (cash, upi, bank), account, or party.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_payments_receipt",
+      "_type": "request",
+      "parentId": "fld_j_payments",
+      "name": "POST /payments — Record Money Receipt (Customer Payment)",
+      "method": "POST",
+      "url": "{{ base_url }}/payments",
+      "description": "Record cash or UPI payment from customer against outstanding invoice or advance. Immediately updates cash drawer and customer ledger.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"payment_date\": \"2026-10-13\",\n  \"payment_type\": \"receipt\",\n  \"account_id\": 1,\n  \"party_id\": 1,\n  \"payment_mode\": \"cash\",\n  \"amount\": 15000,\n  \"notes\": \"Payment received against gold jewellery invoice\"\n}"
+      }
+    },
+    {
+      "_id": "req_j_payments_vendor",
+      "_type": "request",
+      "parentId": "fld_j_payments",
+      "name": "POST /payments — Record Vendor Payment",
+      "method": "POST",
+      "url": "{{ base_url }}/payments",
+      "description": "Pay bullion merchant or ornament vendor via bank transfer or cash.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"payment_date\": \"2026-10-13\",\n  \"payment_type\": \"payment\",\n  \"account_id\": 2,\n  \"party_id\": 1,\n  \"payment_mode\": \"bank_transfer\",\n  \"transaction_reference\": \"NEFT99887766\",\n  \"amount\": 40000,\n  \"notes\": \"Part settlement for bullion purchase bill\"\n}"
+      }
+    },
+    {
+      "_id": "req_j_payments_show",
+      "_type": "request",
+      "parentId": "fld_j_payments",
+      "name": "GET /payments/{id} — Show Payment Voucher",
+      "method": "GET",
+      "url": "{{ base_url }}/payments/1",
+      "description": "View payment voucher details.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_expenses",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "11. Operating Expenses & Incomes",
+      "description": "Showroom operational expenses (rent, salaries, tea & snacks, electricity, packaging) with instant cash deduction and GST input claiming."
+    },
+    {
+      "_id": "req_j_expenses_list",
+      "_type": "request",
+      "parentId": "fld_j_expenses",
+      "name": "GET /expense-incomes — List Operating Expenses & Incomes",
+      "method": "GET",
+      "url": "{{ base_url }}/expense-incomes",
+      "description": "Filter expense and income entries by date range, account head, or payment account.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_expenses_create",
+      "_type": "request",
+      "parentId": "fld_j_expenses",
+      "name": "POST /expense-incomes — Record Daily Operating Expense (Cash Deduction)",
+      "method": "POST",
+      "url": "{{ base_url }}/expense-incomes",
+      "description": "Record daily expenses like tea, staff lunch, electricity, or velvet packaging boxes. Deducts from cash drawer immediately.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"entry_date\": \"2026-10-13\",\n  \"entry_type\": \"expense\",\n  \"account_id\": 8,\n  \"payment_account_id\": 1,\n  \"amount\": 850,\n  \"payment_mode\": \"cash\",\n  \"description\": \"Showroom staff tea, refreshments and cleaning supplies\"\n}"
+      }
+    },
+    {
+      "_id": "req_j_expenses_create_gst",
+      "_type": "request",
+      "parentId": "fld_j_expenses",
+      "name": "POST /expense-incomes — Record GST Business Expense (Claim ITC)",
+      "method": "POST",
+      "url": "{{ base_url }}/expense-incomes",
+      "description": "Record showroom renovation or security camera bill with vendor GSTIN to claim GST Input Tax Credit (ITC).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"entry_date\": \"2026-10-13\",\n  \"entry_type\": \"expense\",\n  \"account_id\": 8,\n  \"payment_account_id\": 2,\n  \"amount\": 11800,\n  \"payment_mode\": \"bank_transfer\",\n  \"reference_no\": \"INV-SEC-450\",\n  \"description\": \"CCTV Security camera annual maintenance contract\",\n  \"is_gst_claimed\": true,\n  \"tax_amount\": 1800,\n  \"vendor_gstin\": \"19AABCS1234D1Z5\"\n}"
+      }
+    },
+    {
+      "_id": "req_j_expenses_show",
+      "_type": "request",
+      "parentId": "fld_j_expenses",
+      "name": "GET /expense-incomes/{id} — Show Entry Details",
+      "method": "GET",
+      "url": "{{ base_url }}/expense-incomes/1",
+      "description": "View expense or income entry details.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_expenses_delete",
+      "_type": "request",
+      "parentId": "fld_j_expenses",
+      "name": "DELETE /expense-incomes/{id} — Delete Entry (Revert Cash)",
+      "method": "DELETE",
+      "url": "{{ base_url }}/expense-incomes/1",
+      "description": "Delete operating expense and restore drawer cash balance.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "fld_j_gst",
+      "_type": "request_group",
+      "parentId": "wrk_bharat",
+      "name": "12. Statutory GST Reports (GSTR-1 & 3B)",
+      "description": "Ready-to-file Indian GST reports: GSTR-1 (B2B, B2C, HSN 7113, Table 9B Credit Notes) and GSTR-3B Tax vs ITC calculation."
+    },
+    {
+      "_id": "req_j_gst_status",
+      "_type": "request",
+      "parentId": "fld_j_gst",
+      "name": "GET /gst/status — Check GST Registration & Rates",
+      "method": "GET",
+      "url": "{{ base_url }}/gst/status",
+      "description": "Check if organization is GST registered, state code, GSTIN, and active tax slabs.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_gst_gstr1",
+      "_type": "request",
+      "parentId": "fld_j_gst",
+      "name": "GET /gst/gstr1-summary — GSTR-1 Outward Supplies Summary",
+      "method": "GET",
+      "url": "{{ base_url }}/gst/gstr1-summary?from_date=2026-10-01&to_date=2026-10-31",
+      "description": "Generates complete GSTR-1 filing tables: Table 4 (B2B Invoices), Table 5 (B2CL), Table 7 (B2CS), Table 9B (Credit Notes CDNR & CDNUR), and Table 12 (HSN 7113 breakdown with gold weights).",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    },
+    {
+      "_id": "req_j_gst_gstr3b",
+      "_type": "request",
+      "parentId": "fld_j_gst",
+      "name": "GET /gst/gstr3b-summary — GSTR-3B Monthly Tax & ITC Summary",
+      "method": "GET",
+      "url": "{{ base_url }}/gst/gstr3b-summary?from_date=2026-10-01&to_date=2026-10-31",
+      "description": "Calculates Table 3.1 Outward Tax Liability (net of returns), Table 4 Eligible ITC (from purchases and GST expenses), and Net Tax Payable in cash challan.",
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ token }}"
+        },
+        {
+          "name": "Accept",
+          "value": "application/json"
+        }
+      ]
+    }
+  ]
+}

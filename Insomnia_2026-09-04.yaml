@@ -1,0 +1,4440 @@
+type: collection.insomnia.rest/5.0
+name: cnat_api
+meta:
+  id: wrk_3f9281eee2ae4df598e25ad7e0abd67e
+  created: 1773384374368
+  modified: 1788500000000
+collection:
+
+  # ─────────────────────────────────────────────
+  # PUBLIC (No Auth)
+  # ─────────────────────────────────────────────
+  - name: PUBLIC (No Auth)
+    meta:
+      id: fld_pub
+      created: 1756138112091
+      modified: 1788500000000
+      sortKey: -1800000000000
+    children:
+      - url: "{{base_url}}/login"
+        name: "POST /login — Authenticate"
+        meta:
+          id: req_login
+          created: 1756138112092
+          modified: 1788500000001
+          isPrivate: false
+          sortKey: -1800000001000
+        method: POST
+        description: Returns Sanctum Bearer token. Copy token to environment.
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "admin@example.com",
+              "password": "password"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # AUTH Self-Service (All Users)
+  # ─────────────────────────────────────────────
+  - name: AUTH Self-Service (All Users)
+    meta:
+      id: fld_auth
+      created: 1756138112200
+      modified: 1788500000000
+      sortKey: -1795000000000
+    children:
+      - url: "{{base_url}}/me"
+        name: "GET /me — Current User"
+        meta:
+          id: req_me
+          created: 1756138112099
+          modified: 1788500000002
+          isPrivate: false
+          sortKey: -1795000001000
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/me2"
+        name: "GET /me2 — Extended User Info"
+        meta:
+          id: req_me2
+          created: 1756138112100
+          modified: 1788500000003
+          isPrivate: false
+          sortKey: -1795000000900
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/logout"
+        name: "POST /logout — Revoke Token"
+        meta:
+          id: req_logout
+          created: 1756138112101
+          modified: 1788500000004
+          isPrivate: false
+          sortKey: -1795000000800
+        method: POST
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/revokeAll"
+        name: "GET /revokeAll — Sign Out Everywhere"
+        meta:
+          id: req_revoke
+          created: 1756138112102
+          modified: 1788500000005
+          isPrivate: false
+          sortKey: -1795000000700
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/register"
+        name: "POST /register — Register New User"
+        meta:
+          id: req_f6cdd64e6a1b429b8296c16283ecaa98
+          created: 1756138112094
+          modified: 1788500000006
+          isPrivate: false
+          sortKey: -1795000000600
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "email": "newuser@example.com",
+              "password": "password123",
+              "password_confirmation": "password123",
+              "employee_id": 1,
+              "user_type_id": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # Cycle Calendar (All Auth Users)
+  # ─────────────────────────────────────────────
+  - name: Cycle Calendar (All Auth Users)
+    meta:
+      id: fld_cycle
+      created: 1756138112204
+      modified: 1788500000000
+      sortKey: -1790000000000
+    children:
+      - url: "{{base_url}}/cycle/me"
+        name: "GET /cycle/me — Load Profile"
+        meta:
+          id: req_cy_get
+          created: 1756138112205
+          modified: 1788500000010
+          isPrivate: false
+          sortKey: -1790000001000
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/me"
+        name: "PUT /cycle/me — Update Profile"
+        meta:
+          id: req_cy_put
+          created: 1756138112206
+          modified: 1788500000011
+          isPrivate: false
+          sortKey: -1790000000900
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "cycle_length": 28,
+              "period_length": 5,
+              "notifications_enabled": true
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/period"
+        name: "POST /cycle/period — Add Date"
+        meta:
+          id: req_cy_add
+          created: 1756138112207
+          modified: 1788500000012
+          isPrivate: false
+          sortKey: -1790000000800
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2026-09-01"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/period/2026-09-01"
+        name: "PUT /cycle/period/{date} — Edit Date"
+        meta:
+          id: req_cy_edit
+          created: 1756138112208
+          modified: 1788500000013
+          isPrivate: false
+          sortKey: -1790000000700
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "date": "2026-09-02"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/period/2026-09-01"
+        name: "DELETE /cycle/period/{date} — Delete Date"
+        meta:
+          id: req_cy_del
+          created: 1756138112209
+          modified: 1788500000014
+          isPrivate: false
+          sortKey: -1790000000600
+        method: DELETE
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/periods/sync"
+        name: "POST /cycle/periods/sync — Bulk Sync"
+        meta:
+          id: req_cy_sync
+          created: 1756138112210
+          modified: 1788500000015
+          isPrivate: false
+          sortKey: -1790000000500
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "dates": [
+                "2026-07-01",
+                "2026-08-03",
+                "2026-09-01"
+              ]
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/cycle/periods"
+        name: "DELETE /cycle/periods — Clear All"
+        meta:
+          id: req_cy_clear
+          created: 1756138112211
+          modified: 1788500000016
+          isPrivate: false
+          sortKey: -1790000000400
+        method: DELETE
+        description: "WARNING: Wipes all period dates for the user."
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # TIER 1 — Administration
+  # ─────────────────────────────────────────────
+  - name: "TIER 1 — Administration (Admin, Developer, Owner)"
+    meta:
+      id: fld_t1
+      created: 1756138112220
+      modified: 1788500000000
+      sortKey: -1785000000000
+    children:
+      - url: "{{base_url}}/users"
+        name: "GET /users — List All Users"
+        meta:
+          id: req_users
+          created: 1756138112221
+          modified: 1788500000020
+          isPrivate: false
+          sortKey: -1785000001000
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/users"
+        name: "POST /users — Register User"
+        meta:
+          id: req_reg
+          created: 1756138112222
+          modified: 1788500000021
+          isPrivate: false
+          sortKey: -1785000000900
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "John Doe",
+              "email": "john@example.com",
+              "password": "password",
+              "password_confirmation": "password",
+              "role": "Teacher"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/user-types"
+        name: "GET /user-types — List Roles"
+        meta:
+          id: req_utypes
+          created: 1756138112223
+          modified: 1788500000022
+          isPrivate: false
+          sortKey: -1785000000800
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/departments"
+        name: "GET /departments — List"
+        meta:
+          id: req_dept_i
+          created: 1756138112224
+          modified: 1788500000023
+          isPrivate: false
+          sortKey: -1785000000700
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/departments"
+        name: "POST /departments — Create"
+        meta:
+          id: req_dept_s
+          created: 1756138112225
+          modified: 1788500000024
+          isPrivate: false
+          sortKey: -1785000000600
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Science",
+              "description": "Science dept"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/departments"
+        name: "PUT /departments — Update"
+        meta:
+          id: req_dept_u
+          created: 1756138112226
+          modified: 1788500000025
+          isPrivate: false
+          sortKey: -1785000000500
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "id": 1,
+              "name": "Science & Technology"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/employees"
+        name: "GET /employees — List"
+        meta:
+          id: req_emp_i
+          created: 1756138112227
+          modified: 1788500000026
+          isPrivate: false
+          sortKey: -1785000000400
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/employees/1"
+        name: "GET /employees/{id} — Show"
+        meta:
+          id: req_emp_sh
+          created: 1756138112228
+          modified: 1788500000027
+          isPrivate: false
+          sortKey: -1785000000300
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/employees"
+        name: "POST /employees — Create"
+        meta:
+          id: req_emp_s
+          created: 1756138112229
+          modified: 1788500000028
+          isPrivate: false
+          sortKey: -1785000000200
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Jane Smith",
+              "email": "jane@example.com",
+              "phone": "9876543210",
+              "department_id": 1,
+              "designation": "Teacher",
+              "joining_date": "2026-01-15"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/employees/1"
+        name: "PUT /employees/{id} — Update"
+        meta:
+          id: req_emp_u
+          created: 1756138112230
+          modified: 1788500000029
+          isPrivate: false
+          sortKey: -1785000000100
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "designation": "Senior Teacher"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/employees/1"
+        name: "DELETE /employees/{id} — Delete"
+        meta:
+          id: req_emp_d
+          created: 1756138112231
+          modified: 1788500000030
+          isPrivate: false
+          sortKey: -1784999999900
+        method: DELETE
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # TIER 1.5 — Admissions Mgmt (+ Manager)
+  # ─────────────────────────────────────────────
+  - name: "TIER 1.5 — Admissions Mgmt (+ Manager)"
+    meta:
+      id: fld_t15
+      created: 1756138112240
+      modified: 1788500000000
+      sortKey: -1782000000000
+    children:
+      - url: "{{base_url}}/admissions/admissionWithStudent"
+        name: "POST /admissions/admissionWithStudent — Register Student+Admission"
+        meta:
+          id: req_aws
+          created: 1782919982733
+          modified: 1788500000031
+          isPrivate: false
+          sortKey: -1782000001000
+        method: POST
+        description: Creates Student AND Admission in one transaction.
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "student": {
+                "studentName": "Ananya Mukherjee",
+                "nickname": "ananya",
+                "email": "ananya@example.com",
+                "dob": "2001-11-22",
+                "bloodGroup": "A+",
+                "fatherName": "Arindram Mukherjee",
+                "motherName": "Soma Mukherjee",
+                "guardianName": "Arindram Mukherjee",
+                "guardianRelation": "Father",
+                "guardianPhone": "9838923456",
+                "phone1": "1234967890",
+                "phone2": "1234867891",
+                "whatsapp": "1234967890",
+                "address": "Flat 4B, Lake View Residency, Garia",
+                "districtId": 3,
+                "city": "Kolkata",
+                "pin": "700000",
+                "genderId": 2
+              },
+              "admission": {
+                "courseId": 3,
+                "feeModesId": 1,
+                "courseStatusId": 1,
+                "courseFees": 42000,
+                "admissionDate": "2026-09-04",
+                "completionDate": "2027-09-03"
+              }
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # TIER 2 — Academic Staff (+ Teacher)
+  # ─────────────────────────────────────────────
+  - name: "TIER 2 — Academic Staff (+ Teacher)"
+    meta:
+      id: fld_t2
+      created: 1756138112250
+      modified: 1788500000000
+      sortKey: -1780000000000
+    children:
+      - url: "{{base_url}}/fee-modes"
+        name: "GET /fee-modes — List Payment Modes"
+        meta:
+          id: req_fmodes
+          created: 1756138112251
+          modified: 1788500000040
+          isPrivate: false
+          sortKey: -1780000001000
+        method: GET
+        body:
+          mimeType: application/json
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        authentication:
+          type: bearer
+          token: "{{ auth.bearerToken }}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      # ---- Students ----
+      - name: STUDENTS
+        meta:
+          id: fld_stu
+          created: 1761803334757
+          modified: 1788500000000
+          sortKey: -1780000000950
+        children:
+          - url: "{{base_url}}/students"
+            name: "GET /students — List All"
+            meta:
+              id: req_stu_i
+              created: 1761808021449
+              modified: 1788500000041
+              isPrivate: false
+              sortKey: -1780000000950
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/1"
+            name: "GET /students/{id} — Show"
+            meta:
+              id: req_stu_sh
+              created: 1761808021450
+              modified: 1788500000042
+              isPrivate: false
+              sortKey: -1780000000940
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students"
+            name: "POST /students — Create (full)"
+            meta:
+              id: req_stu_s
+              created: 1773172682198
+              modified: 1788500000043
+              isPrivate: false
+              sortKey: -1780000000930
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "studentName": "Kaustav Das",
+                  "nickname": "kaustav",
+                  "email": "kaustav.das@example.com",
+                  "dob": "2003-08-10",
+                  "bloodGroup": "O+",
+                  "fatherName": "Bikash Das",
+                  "motherName": "Anita Das",
+                  "guardianName": "Bikash Das",
+                  "guardianRelation": "Father",
+                  "guardianPhone": "9876500000",
+                  "phone1": "9876500001",
+                  "phone2": "9876500002",
+                  "whatsapp": "9876500000",
+                  "address": "Kolkata",
+                  "districtId": 1,
+                  "city": "Kolkata",
+                  "pin": "700001",
+                  "genderId": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/basic"
+            name: "POST /students/basic — Create (minimal)"
+            meta:
+              id: req_stu_sb
+              created: 1773172682199
+              modified: 1788500000044
+              isPrivate: false
+              sortKey: -1780000000920
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "studentName": "Priya Sharma",
+                  "phone1": "9000000002"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/1"
+            name: "PUT /students/{id} — Update"
+            meta:
+              id: req_stu_u
+              created: 1762504263105
+              modified: 1788500000045
+              isPrivate: false
+              sortKey: -1780000000910
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "registration_number": "REG2025001",
+                  "studentName": "Anirban Dey Updated",
+                  "nickname": "anir",
+                  "email": "anirban.dey@example.com",
+                  "dob": "2003-05-10",
+                  "bloodGroup": "B+",
+                  "fatherName": "Sanjay Dey",
+                  "motherName": "Mita Dey",
+                  "phone1": "9876543210",
+                  "phone2": "9876500001",
+                  "whatsapp": "9876543210",
+                  "address": "Barrackpore Updated",
+                  "districtId": 1,
+                  "city": "Barrackpore",
+                  "pin": "700120",
+                  "genderId": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/1"
+            name: "DELETE /students/{id} — Delete"
+            meta:
+              id: req_stu_d
+              created: 1773172682200
+              modified: 1788500000046
+              isPrivate: false
+              sortKey: -1780000000900
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/1/admissions"
+            name: "GET /students/{id}/admissions — Admissions"
+            meta:
+              id: req_stu_adm
+              created: 1773172682201
+              modified: 1788500000047
+              isPrivate: false
+              sortKey: -1780000000890
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+
+          - url: "{{base_url}}/students/1/previous-admissions"
+            name: "GET /students/{id}/previous-admissions — Previous Admissions & Payment Details"
+            meta:
+              id: req_stu_prev_adm
+              created: 1789586000000
+              modified: 1789586000000
+              isPrivate: false
+              sortKey: -1780000000885
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/students/without-admission"
+            name: "GET /students/without-admission — No Admission"
+            meta:
+              id: req_stu_wo
+              created: 1784129766268
+              modified: 1788500000048
+              isPrivate: false
+              sortKey: -1780000000880
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Admissions ----
+      - name: ADMISSIONS
+        meta:
+          id: fld_adm
+          created: 1762357470721
+          modified: 1788500000000
+          sortKey: -1778000000000
+        children:
+          - url: "{{base_url}}/admissions"
+            name: "GET /admissions — List All"
+            meta:
+              id: req_adm_i
+              created: 1762357470722
+              modified: 1788500000050
+              isPrivate: false
+              sortKey: -1778000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/admissions/1"
+            name: "GET /admissions/{id} — Show"
+            meta:
+              id: req_adm_sh
+              created: 1762357470723
+              modified: 1788500000051
+              isPrivate: false
+              sortKey: -1778000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/admissions"
+            name: "POST /admissions — Create"
+            meta:
+              id: req_adm_s
+              created: 1762357470724
+              modified: 1788500000052
+              isPrivate: false
+              sortKey: -1778000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "studentId": 2,
+                  "courseId": 4,
+                  "courseStatusId": 1,
+                  "courseFees": 10000,
+                  "feeModesId": 2,
+                  "admissionDate": "2026-09-04"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/admissions/1"
+            name: "PUT /admissions/{id} — Update"
+            meta:
+              id: req_adm_u
+              created: 1762504303754
+              modified: 1788500000053
+              isPrivate: false
+              sortKey: -1778000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "studentId": 2,
+                  "courseId": 6,
+                  "courseStatusId": 1,
+                  "courseFees": 15000,
+                  "admissionDate": "2026-09-04"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/admissions/1"
+            name: "DELETE /admissions/{id} — Delete"
+            meta:
+              id: req_adm_d
+              created: 1786025340006
+              modified: 1788500000054
+              isPrivate: false
+              sortKey: -1778000000600
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/admissions/1/ledger"
+            name: "GET /admissions/{id}/ledger — Fee Ledger"
+            meta:
+              id: req_adm_led
+              created: 1786025340007
+              modified: 1788500000055
+              isPrivate: false
+              sortKey: -1778000000500
+            method: GET
+            description: Payments made + outstanding balance.
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Courses ----
+      - name: COURSES
+        meta:
+          id: fld_crs
+          created: 1761817001292
+          modified: 1788500000000
+          sortKey: -1776000000000
+        children:
+          - url: "{{base_url}}/courses"
+            name: "GET /courses — List All"
+            meta:
+              id: req_crs_i
+              created: 1761817001293
+              modified: 1788500000060
+              isPrivate: false
+              sortKey: -1776000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses/details"
+            name: "GET /courses/details — With Details"
+            meta:
+              id: req_crs_det
+              created: 1761817001294
+              modified: 1788500000061
+              isPrivate: false
+              sortKey: -1776000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses"
+            name: "POST /courses — Create (full)"
+            meta:
+              id: req_crs_s
+              created: 1761817001295
+              modified: 1788500000062
+              isPrivate: false
+              sortKey: -1776000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "course_code": "FSWEB101",
+                  "course_name": "Full Stack Web Development",
+                  "duration_months": 6,
+                  "fees": 25000,
+                  "department_id": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses/basic"
+            name: "POST /courses/basic — Create (minimal)"
+            meta:
+              id: req_crs_sb
+              created: 1761817001296
+              modified: 1788500000063
+              isPrivate: false
+              sortKey: -1776000000700
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "course_code": "DIGMKT01",
+                  "course_name": "Digital Marketing"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses/1"
+            name: "PUT /courses/{id} — Update"
+            meta:
+              id: req_crs_u
+              created: 1761817001297
+              modified: 1788500000064
+              isPrivate: false
+              sortKey: -1776000000600
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "fees": 27000
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses/1"
+            name: "DELETE /courses/{id} — Delete"
+            meta:
+              id: req_crs_d
+              created: 1761817001298
+              modified: 1788500000065
+              isPrivate: false
+              sortKey: -1776000000500
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/courses/1/students"
+            name: "GET /courses/{id}/students — Enrolled Students"
+            meta:
+              id: req_crs_stu
+              created: 1761817001299
+              modified: 1788500000066
+              isPrivate: false
+              sortKey: -1776000000400
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Curriculum — Subjects, Chapters, Topics ----
+      - name: "Curriculum — Subjects, Chapters, Topics"
+        meta:
+          id: fld_cur
+          created: 1769751087908
+          modified: 1788500000000
+          sortKey: -1774000000000
+        children:
+          - url: "{{base_url}}/subjects"
+            name: "GET /subjects — List"
+            meta:
+              id: req_sub_i
+              created: 1769751124657
+              modified: 1788500000070
+              isPrivate: false
+              sortKey: -1774000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects/3"
+            name: "GET /subjects/{id} — Show"
+            meta:
+              id: req_sub_sh
+              created: 1770268331028
+              modified: 1788500000071
+              isPrivate: false
+              sortKey: -1774000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects/unused"
+            name: "GET /subjects/unused — Unlinked"
+            meta:
+              id: req_sub_un
+              created: 1770276507262
+              modified: 1788500000072
+              isPrivate: false
+              sortKey: -1774000000850
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects/1/chapters"
+            name: "GET /subjects/{id}/chapters — Chapters"
+            meta:
+              id: req_sub_ch
+              created: 1770278379334
+              modified: 1788500000073
+              isPrivate: false
+              sortKey: -1774000000800
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects"
+            name: "POST /subjects — Create"
+            meta:
+              id: req_sub_s
+              created: 1769751206644
+              modified: 1788500000074
+              isPrivate: false
+              sortKey: -1774000000750
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "subjectName": "Mathematics",
+                  "subjectCode": "MATH101",
+                  "description": "Core mathematics subject"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects/9"
+            name: "PUT /subjects/{id} — Update"
+            meta:
+              id: req_sub_u
+              created: 1770268760320
+              modified: 1788500000075
+              isPrivate: false
+              sortKey: -1774000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "subject_name": "Advanced Mathematics",
+                  "subject_code": "MATH201",
+                  "description": "Advanced level mathematics"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/subjects/8"
+            name: "DELETE /subjects/{id} — Delete"
+            meta:
+              id: req_sub_d
+              created: 1770269189375
+              modified: 1788500000076
+              isPrivate: false
+              sortKey: -1774000000650
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters"
+            name: "GET /chapters — List"
+            meta:
+              id: req_chp_i
+              created: 1770358180377
+              modified: 1788500000077
+              isPrivate: false
+              sortKey: -1774000000600
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters/42"
+            name: "GET /chapters/{id} — Show"
+            meta:
+              id: req_chp_sh
+              created: 1771484259839
+              modified: 1788500000078
+              isPrivate: false
+              sortKey: -1774000000580
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters/unusedChapters"
+            name: "GET /chapters/unusedChapters — Unassigned"
+            meta:
+              id: req_chp_un
+              created: 1771484053311
+              modified: 1788500000079
+              isPrivate: false
+              sortKey: -1774000000560
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters/2/topics"
+            name: "GET /chapters/{id}/topics — Topics"
+            meta:
+              id: req_chp_tp
+              created: 1771485821109
+              modified: 1788500000080
+              isPrivate: false
+              sortKey: -1774000000540
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters"
+            name: "POST /chapters — Create"
+            meta:
+              id: req_chp_s
+              created: 1770359878343
+              modified: 1788500000081
+              isPrivate: false
+              sortKey: -1774000000520
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "subjectId": 5,
+                  "chapterName": "Algebra"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters/42"
+            name: "PUT /chapters/{id} — Update"
+            meta:
+              id: req_chp_u
+              created: 1770363860594
+              modified: 1788500000082
+              isPrivate: false
+              sortKey: -1774000000500
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "subjectId": 5,
+                  "chapterName": "Linear Algebra"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/chapters/41"
+            name: "DELETE /chapters/{id} — Delete"
+            meta:
+              id: req_chp_d
+              created: 1771487421545
+              modified: 1788500000083
+              isPrivate: false
+              sortKey: -1774000000480
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics"
+            name: "GET /topics — List"
+            meta:
+              id: req_top_i
+              created: 1779946630684
+              modified: 1788500000084
+              isPrivate: false
+              sortKey: -1774000000460
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics/2"
+            name: "GET /topics/{id} — Show"
+            meta:
+              id: req_top_sh
+              created: 1779950491740
+              modified: 1788500000085
+              isPrivate: false
+              sortKey: -1774000000450
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics/unusedTopics"
+            name: "GET /topics/unusedTopics — Unlinked"
+            meta:
+              id: req_top_un
+              created: 1779946607432
+              modified: 1788500000086
+              isPrivate: false
+              sortKey: -1774000000440
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics/1/questions"
+            name: "GET /topics/{id}/questions — Questions"
+            meta:
+              id: req_top_q
+              created: 1779948019354
+              modified: 1788500000087
+              isPrivate: false
+              sortKey: -1774000000430
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics"
+            name: "POST /topics — Create"
+            meta:
+              id: req_top_s
+              created: 1779949921414
+              modified: 1788500000088
+              isPrivate: false
+              sortKey: -1774000000420
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "chapterId": 2,
+                  "topicName": "Matrices"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics/258"
+            name: "PUT /topics/{id} — Update"
+            meta:
+              id: req_top_u
+              created: 1779950625249
+              modified: 1788500000089
+              isPrivate: false
+              sortKey: -1774000000410
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "chapterId": 2,
+                  "topicName": "Matrices & Determinants"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/topics/258"
+            name: "DELETE /topics/{id} — Delete"
+            meta:
+              id: req_top_d
+              created: 1779950998401
+              modified: 1788500000090
+              isPrivate: false
+              sortKey: -1774000000400
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Question Bank & Options ----
+      - name: "Question Bank & Options"
+        meta:
+          id: fld_qb
+          created: 1768033733958
+          modified: 1788500000000
+          sortKey: -1772000000000
+        children:
+          - url: "{{base_url}}/questions"
+            name: "GET /questions — List"
+            meta:
+              id: req_q_i
+              created: 1779951150208
+              modified: 1788500000100
+              isPrivate: false
+              sortKey: -1772000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/questions/1"
+            name: "GET /questions/{id} — Show"
+            meta:
+              id: req_q_sh
+              created: 1777529326334
+              modified: 1788500000101
+              isPrivate: false
+              sortKey: -1772000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/questions"
+            name: "POST /questions — Create"
+            meta:
+              id: req_q_s
+              created: 1779951150213
+              modified: 1788500000102
+              isPrivate: false
+              sortKey: -1772000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "topicId": 25,
+                  "questionText": "Are Python lists mutable?",
+                  "questionCode": null,
+                  "questionImage": null,
+                  "questionTypeId": 1,
+                  "questionLevelId": 1,
+                  "questionTags": ["python", "list", "mutable"],
+                  "applicableTo": ["class_8", "class_9", "class_10"],
+                  "inforce": true
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/questions/502"
+            name: "PUT /questions/{id} — Update"
+            meta:
+              id: req_q_u
+              created: 1779951150217
+              modified: 1788500000103
+              isPrivate: false
+              sortKey: -1772000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "topicId": 25,
+                  "questionText": "Explain slicing in Python?",
+                  "questionTypeId": 3,
+                  "questionLevelId": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/questions/425"
+            name: "DELETE /questions/{id} — Delete"
+            meta:
+              id: req_q_d
+              created: 1779951150219
+              modified: 1788500000104
+              isPrivate: false
+              sortKey: -1772000000600
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/options"
+            name: "GET /options — List"
+            meta:
+              id: req_opt_i
+              created: 1780639210365
+              modified: 1788500000105
+              isPrivate: false
+              sortKey: -1772000000500
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/options/1698"
+            name: "GET /options/{id} — Show"
+            meta:
+              id: req_opt_sh
+              created: 1780639608865
+              modified: 1788500000106
+              isPrivate: false
+              sortKey: -1772000000400
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/options"
+            name: "POST /options — Create"
+            meta:
+              id: req_opt_s
+              created: 1780641117858
+              modified: 1788500000107
+              isPrivate: false
+              sortKey: -1772000000300
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "questionId": 1,
+                  "optionText": "Yes, Python lists are mutable",
+                  "isCorrect": true
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/options/1698"
+            name: "PUT /options/{id} — Update"
+            meta:
+              id: req_opt_u
+              created: 1780644214624
+              modified: 1788500000108
+              isPrivate: false
+              sortKey: -1772000000200
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "questionId": 1,
+                  "optionText": "Modified option text"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/options/1697"
+            name: "DELETE /options/{id} — Delete"
+            meta:
+              id: req_opt_d
+              created: 1786000111940
+              modified: 1788500000109
+              isPrivate: false
+              sortKey: -1772000000100
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Results ----
+      - name: Results
+        meta:
+          id: fld_res
+          created: 1756138112260
+          modified: 1788500000000
+          sortKey: -1770000000000
+        children:
+          - url: "{{base_url}}/results"
+            name: "GET /results — List"
+            meta:
+              id: req_r_i
+              created: 1756138112261
+              modified: 1788500000110
+              isPrivate: false
+              sortKey: -1770000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/results/1"
+            name: "GET /results/{id} — Show"
+            meta:
+              id: req_r_sh
+              created: 1756138112262
+              modified: 1788500000111
+              isPrivate: false
+              sortKey: -1770000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/results"
+            name: "POST /results — Create"
+            meta:
+              id: req_r_s
+              created: 1756138112263
+              modified: 1788500000112
+              isPrivate: false
+              sortKey: -1770000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "admission_id": 1,
+                  "theory_marks": 75,
+                  "practical_marks": 18,
+                  "total_theory_marks": 80,
+                  "total_practical_marks": 20,
+                  "result_date": "2026-09-04"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/results/1"
+            name: "PUT /results/{id} — Update"
+            meta:
+              id: req_r_u
+              created: 1756138112264
+              modified: 1788500000113
+              isPrivate: false
+              sortKey: -1770000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "theory_marks": 78,
+                  "practical_marks": 19
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/results/1"
+            name: "DELETE /results/{id} — Delete"
+            meta:
+              id: req_r_d
+              created: 1756138112265
+              modified: 1788500000114
+              isPrivate: false
+              sortKey: -1770000000600
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Fee Receipts ----
+      - name: Fee Receipts
+        meta:
+          id: fld_fee
+          created: 1756138112270
+          modified: 1788500000000
+          sortKey: -1768000000000
+        children:
+          - url: "{{base_url}}/fees-receipts"
+            name: "GET /fees-receipts — List"
+            meta:
+              id: req_f_i
+              created: 1756138112271
+              modified: 1788500000120
+              isPrivate: false
+              sortKey: -1768000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/fees-receipts/1"
+            name: "GET /fees-receipts/{id} — Show"
+            meta:
+              id: req_f_sh
+              created: 1756138112272
+              modified: 1788500000121
+              isPrivate: false
+              sortKey: -1768000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/fees-receipts"
+            name: "POST /fees-receipts — Create"
+            meta:
+              id: req_f_s
+              created: 1756138112273
+              modified: 1788500000122
+              isPrivate: false
+              sortKey: -1768000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "admission_id": 1,
+                  "amount_paid": 5000,
+                  "payment_date": "2026-09-04",
+                  "fee_mode_id": 1,
+                  "remarks": "First installment"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/fees-receipts/1"
+            name: "PUT /fees-receipts/{id} — Update"
+            meta:
+              id: req_f_u
+              created: 1756138112274
+              modified: 1788500000123
+              isPrivate: false
+              sortKey: -1768000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "remarks": "Corrected first installment"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/fees-receipts/1"
+            name: "DELETE /fees-receipts/{id} — Delete"
+            meta:
+              id: req_f_d
+              created: 1756138112275
+              modified: 1788500000124
+              isPrivate: false
+              sortKey: -1768000000600
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- States ----
+      - name: States (Reference Data)
+        meta:
+          id: fld_st
+          created: 1768460818100
+          modified: 1788500000000
+          sortKey: -1766000000000
+        children:
+          - url: "{{base_url}}/states"
+            name: "GET /states — List"
+            meta:
+              id: req_st_i
+              created: 1768460824512
+              modified: 1788500000130
+              isPrivate: false
+              sortKey: -1766000001000
+            method: GET
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/states/19"
+            name: "GET /states/{id} — Show"
+            meta:
+              id: req_st_sh
+              created: 1768462429338
+              modified: 1788500000131
+              isPrivate: false
+              sortKey: -1766000000900
+            method: GET
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/states"
+            name: "POST /states — Create"
+            meta:
+              id: req_st_s
+              created: 1768466234269
+              modified: 1788500000132
+              isPrivate: false
+              sortKey: -1766000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "stateCode": 204,
+                  "stateName": "Maharashtra"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/states/1"
+            name: "PUT /states/{id} — Update"
+            meta:
+              id: req_st_u
+              created: 1768466234270
+              modified: 1788500000133
+              isPrivate: false
+              sortKey: -1766000000700
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "stateName": "Maharashtra (Updated)",
+                  "stateCode": 204
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/states/1"
+            name: "DELETE /states/{id} — Delete"
+            meta:
+              id: req_st_d
+              created: 1768466234271
+              modified: 1788500000134
+              isPrivate: false
+              sortKey: -1766000000600
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # TIER 3 — Events & Inquiries (+ Manager Sale)
+  # ─────────────────────────────────────────────
+  - name: "TIER 3 — Events & Inquiries (+ Manager Sale)"
+    meta:
+      id: fld_t3
+      created: 1756138112204
+      modified: 1788500000000
+      sortKey: -1760000000000
+    children:
+      # ---- Guests ----
+      - name: Guests (Inquiries / Leads)
+        meta:
+          id: fld_gst
+          created: 1756138112204
+          modified: 1788500000000
+          sortKey: -1760000000950
+        children:
+          - url: "{{base_url}}/guests"
+            name: "GET /guests — List All"
+            meta:
+              id: req_g_i
+              created: 1787813220663
+              modified: 1788500000140
+              isPrivate: false
+              sortKey: -1760000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests?page=1"
+            name: "GET /guests?page= — Paginated"
+            meta:
+              id: req_29193246b5054ab383a7b3f7cc69bc86
+              created: 1787813220663
+              modified: 1788500000141
+              isPrivate: false
+              sortKey: -1760000000900
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/190"
+            name: "GET /guests/{id} — Show"
+            meta:
+              id: req_f5a2911094df4cd68f49448323082c78
+              created: 1756138112212
+              modified: 1788500000142
+              isPrivate: false
+              sortKey: -1760000000850
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests"
+            name: "POST /guests — Create Inquiry"
+            meta:
+              id: req_f5358211184f40b0a5f98bf4cea916a4
+              created: 1756138112206
+              modified: 1788500000143
+              isPrivate: false
+              sortKey: -1760000000800
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "guestName": "Anita Rao",
+                  "mobile": "9000000099",
+                  "wpNumber": "9000000099",
+                  "email": "anita@example.com",
+                  "address": "Kolkata",
+                  "pin": "700001",
+                  "genderId": "2",
+                  "foodPreferenceId": "1",
+                  "isAttending": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/2"
+            name: "PUT /guests/{id} — Update"
+            meta:
+              id: req_464a777731db4d8e8b9908878a44ba45
+              created: 1756138112209
+              modified: 1788500000144
+              isPrivate: false
+              sortKey: -1760000000750
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "guestName": "Anita Rao Updated",
+                  "mobile": "9000000099",
+                  "wpNumber": "9000000099",
+                  "email": "anita.updated@example.com",
+                  "genderId": 2,
+                  "foodPreferenceId": "1",
+                  "isAttending": 1
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/3"
+            name: "DELETE /guests/{id} — Delete"
+            meta:
+              id: req_b1255fd79154411fb76c4d44d9c7acde
+              created: 1756138112210
+              modified: 1788500000145
+              isPrivate: false
+              sortKey: -1760000000700
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [key] General keyword (name / mobile / email / token)"
+            meta:
+              id: req_search_key
+              created: 1756138112213
+              modified: 1788500000146
+              isPrivate: false
+              sortKey: -1760000000650
+            description: |
+              General full-text search. Matches guest_name, mobile, wp_number, email, and CNAT token simultaneously.
+              All other params below are DISABLED - enable any to narrow down further.
+
+              Sample:  ?key=Ravi
+                       ?key=9823        (phone partial)
+                       ?key=CNAT-1050   (exact token lookup)
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: key
+                value: "Ravi"
+                disabled: false
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [name] By Guest Name (partial match)"
+            meta:
+              id: req_search_name
+              created: 1756138112213
+              modified: 1788500000147
+              isPrivate: false
+              sortKey: -1760000000640
+            description: |
+              Partial LIKE match on guest_name only.
+              ?name=kumar   -> all guests whose name contains "kumar"
+              Tip: combine with ?year= to narrow by year.
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: name
+                value: "Kumar"
+                disabled: false
+              - name: year
+                value: "2026"
+                disabled: true
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [year] By Year (exact)"
+            meta:
+              id: req_search_year
+              created: 1756138112213
+              modified: 1788500000148
+              isPrivate: false
+              sortKey: -1760000000630
+            description: |
+              Exact match on the year column. ?year=2026 -> only guests registered in 2026.
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: year
+                value: "2026"
+                disabled: false
+              - name: per_page
+                value: "20"
+                disabled: true
+              - name: sort_by
+                value: "guest_name"
+                disabled: true
+              - name: sort_dir
+                value: "asc"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [year + name] Year AND Name combined"
+            meta:
+              id: req_search_year_name
+              created: 1756138112213
+              modified: 1788500000149
+              isPrivate: false
+              sortKey: -1760000000620
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: year
+                value: "2026"
+                disabled: false
+              - name: name
+                value: "Das"
+                disabled: false
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [mobile] By Mobile or WhatsApp number (partial)"
+            meta:
+              id: req_search_mobile
+              created: 1756138112213
+              modified: 1788500000150
+              isPrivate: false
+              sortKey: -1760000000610
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: mobile
+                value: "9800"
+                disabled: false
+              - name: year
+                value: "2026"
+                disabled: true
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [email] By Email (partial match)"
+            meta:
+              id: req_search_email
+              created: 1756138112213
+              modified: 1788500000151
+              isPrivate: false
+              sortKey: -1760000000600
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: email
+                value: "gmail"
+                disabled: false
+              - name: year
+                value: "2026"
+                disabled: true
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [is_attending] Filter by attendance status"
+            meta:
+              id: req_search_attending
+              created: 1756138112213
+              modified: 1788500000152
+              isPrivate: false
+              sortKey: -1760000000590
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: is_attending
+                value: "1"
+                disabled: false
+              - name: year
+                value: "2026"
+                disabled: true
+              - name: per_page
+                value: "20"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [token] By CNAT Token (exact match)"
+            meta:
+              id: req_search_token
+              created: 1756138112213
+              modified: 1788500000153
+              isPrivate: false
+              sortKey: -1760000000580
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: token
+                value: "CNAT-1001"
+                disabled: false
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [date_from + date_to] By Registration Date Range"
+            meta:
+              id: req_search_date_range
+              created: 1756138112213
+              modified: 1788500000154
+              isPrivate: false
+              sortKey: -1760000000570
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: date_from
+                value: "2026-01-01"
+                disabled: false
+              - name: date_to
+                value: "2026-12-31"
+                disabled: false
+              - name: per_page
+                value: "20"
+                disabled: true
+              - name: sort_by
+                value: "created_at"
+                disabled: true
+              - name: sort_dir
+                value: "desc"
+                disabled: true
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/guests/search/any"
+            name: "Search — [COMBO] All Filters Together - Enable/Disable As Needed"
+            meta:
+              id: req_search_combo
+              created: 1756138112213
+              modified: 1788500000155
+              isPrivate: false
+              sortKey: -1760000000560
+            description: |
+              ALL available filters in one request. Enable/disable individual params to test combinations.
+              FILTER: key, name, year, mobile, email, address, is_attending, gender_id, food_preference_id, token, date_from, date_to
+              SORT & PAGE: sort_by, sort_dir, per_page
+            method: GET
+            body:
+              mimeType: application/json
+            params:
+              - name: key
+                value: ""
+                disabled: true
+              - name: name
+                value: "Kumar"
+                disabled: false
+              - name: year
+                value: "2026"
+                disabled: false
+              - name: mobile
+                value: ""
+                disabled: true
+              - name: email
+                value: ""
+                disabled: true
+              - name: address
+                value: ""
+                disabled: true
+              - name: is_attending
+                value: "1"
+                disabled: false
+              - name: gender_id
+                value: ""
+                disabled: true
+              - name: food_preference_id
+                value: ""
+                disabled: true
+              - name: token
+                value: ""
+                disabled: true
+              - name: date_from
+                value: "2026-01-01"
+                disabled: true
+              - name: date_to
+                value: "2026-12-31"
+                disabled: true
+              - name: sort_by
+                value: "created_at"
+                disabled: false
+              - name: sort_dir
+                value: "desc"
+                disabled: false
+              - name: per_page
+                value: "10"
+                disabled: false
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              disabled: false
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+      # ---- Visitors ----
+      - name: Visitors (Walk-in Log)
+        meta:
+          id: fld_vis
+          created: 1756138112280
+          modified: 1788500000000
+          sortKey: -1758000000000
+        children:
+          - url: "{{base_url}}/visitors"
+            name: "GET /visitors — List All"
+            meta:
+              id: req_v_i
+              created: 1756138112281
+              modified: 1788500000160
+              isPrivate: false
+              sortKey: -1758000001000
+            method: GET
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/visitors"
+            name: "POST /visitors — Log Walk-in (throttle 3/min)"
+            meta:
+              id: req_v_s
+              created: 1756138112282
+              modified: 1788500000161
+              isPrivate: false
+              sortKey: -1758000000900
+            method: POST
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "name": "Walk-in Visitor",
+                  "phone": "9000000011",
+                  "purpose": "Course inquiry",
+                  "visited_at": "2026-09-04 10:30:00"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/visitors/1"
+            name: "PUT /visitors/{id} — Update Entry"
+            meta:
+              id: req_v_u
+              created: 1756138112283
+              modified: 1788500000162
+              isPrivate: false
+              sortKey: -1758000000800
+            method: PUT
+            body:
+              mimeType: application/json
+              text: |-
+                {
+                  "purpose": "Admission inquiry"
+                }
+            headers:
+              - name: Content-Type
+                value: application/json
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+          - url: "{{base_url}}/visitors/1"
+            name: "DELETE /visitors/{id} — Delete"
+            meta:
+              id: req_v_d
+              created: 1756138112284
+              modified: 1788500000163
+              isPrivate: false
+              sortKey: -1758000000700
+            method: DELETE
+            body:
+              mimeType: application/json
+            headers:
+              - name: Accept
+                value: application/json
+              - name: User-Agent
+                value: insomnia/11.0.2
+            authentication:
+              type: bearer
+              token: "{{ auth.bearerToken }}"
+            settings:
+              renderRequestBody: true
+              encodeUrl: true
+              followRedirects: global
+              cookies:
+                send: true
+                store: true
+              rebuildPath: true
+
+  # ─────────────────────────────────────────────
+  # DEV — No Auth (Local Only)
+  # ─────────────────────────────────────────────
+  - name: "DEV — No Auth (Local Only)"
+    meta:
+      id: fld_dev
+      created: 1756138112290
+      modified: 1788500000000
+      sortKey: -1750000000000
+    children:
+      - url: "{{base_url}}/dev/guests"
+        name: "[DEV] GET /dev/guests — List"
+        meta:
+          id: req_dg_i
+          created: 1756138112291
+          modified: 1788500000170
+          isPrivate: false
+          sortKey: -1750000001000
+        method: GET
+        description: "WARNING: No authentication. Local dev only. Never expose in production."
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/guests/1"
+        name: "[DEV] GET /dev/guests/{id} — Show"
+        meta:
+          id: req_dg_sh
+          created: 1756138112292
+          modified: 1788500000171
+          isPrivate: false
+          sortKey: -1750000000900
+        method: GET
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/guests"
+        name: "[DEV] POST /dev/guests — Create"
+        meta:
+          id: req_dg_s
+          created: 1756138112293
+          modified: 1788500000172
+          isPrivate: false
+          sortKey: -1750000000800
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "guestName": "Test Guest",
+              "mobile": "9000000000",
+              "wpNumber": "9000000000",
+              "email": "testguest@example.com",
+              "address": "Test Address",
+              "pin": "700001",
+              "genderId": "1",
+              "foodPreferenceId": "1",
+              "isAttending": 0
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/guests/1"
+        name: "[DEV] PUT /dev/guests/{id} — Edit"
+        meta:
+          id: req_dg_e
+          created: 1756138112294
+          modified: 1788500000173
+          isPrivate: false
+          sortKey: -1750000000700
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "guestName": "Updated Guest Name",
+              "isAttending": 1
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/guests/1"
+        name: "[DEV] DELETE /dev/guests/{id} — Delete"
+        meta:
+          id: req_dg_d
+          created: 1756138112295
+          modified: 1788500000174
+          isPrivate: false
+          sortKey: -1750000000600
+        method: DELETE
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/students"
+        name: "[DEV] GET /dev/students — List"
+        meta:
+          id: req_ds_i
+          created: 1756138112296
+          modified: 1788500000175
+          isPrivate: false
+          sortKey: -1750000000500
+        method: GET
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/students"
+        name: "[DEV] POST /dev/students — Create"
+        meta:
+          id: req_ds_s
+          created: 1756138112297
+          modified: 1788500000176
+          isPrivate: false
+          sortKey: -1750000000400
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "studentName": "Test Student",
+              "phone1": "9100000000"
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/students/1"
+        name: "[DEV] PUT /dev/students/{id} — Update"
+        meta:
+          id: req_ds_u
+          created: 1756138112298
+          modified: 1788500000177
+          isPrivate: false
+          sortKey: -1750000000300
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "studentName": "Updated Student Name"
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/students/1"
+        name: "[DEV] DELETE /dev/students/{id} — Delete"
+        meta:
+          id: req_ds_d
+          created: 1756138112299
+          modified: 1788500000178
+          isPrivate: false
+          sortKey: -1750000000200
+        method: DELETE
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/admissions"
+        name: "[DEV] GET /dev/admissions — List"
+        meta:
+          id: req_da_i
+          created: 1756138112300
+          modified: 1788500000179
+          isPrivate: false
+          sortKey: -1750000000100
+        method: GET
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/admissions"
+        name: "[DEV] POST /dev/admissions — Create"
+        meta:
+          id: req_da_s
+          created: 1756138112301
+          modified: 1788500000180
+          isPrivate: false
+          sortKey: -1749999999900
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "student_id": 1,
+              "course_id": 1
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/admissions/1"
+        name: "[DEV] PUT /dev/admissions/{id} — Update"
+        meta:
+          id: req_da_u
+          created: 1756138112302
+          modified: 1788500000181
+          isPrivate: false
+          sortKey: -1749999999800
+        method: PUT
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "course_id": 2
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/admissions/1"
+        name: "[DEV] DELETE /dev/admissions/{id} — Delete"
+        meta:
+          id: req_da_d
+          created: 1756138112303
+          modified: 1788500000182
+          isPrivate: false
+          sortKey: -1749999999700
+        method: DELETE
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/certificates/CERT-2026-001"
+        name: "[DEV] GET /dev/certificates/{number} — Lookup"
+        meta:
+          id: req_dc
+          created: 1756138112304
+          modified: 1788500000183
+          isPrivate: false
+          sortKey: -1749999999600
+        method: GET
+        description: Replace CERT-2026-001 with real cert number.
+        headers:
+          - name: Accept
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+      - url: "{{base_url}}/dev/visitors"
+        name: "[DEV] POST /dev/visitors — Log Visitor"
+        meta:
+          id: req_dv_s
+          created: 1756138112305
+          modified: 1788500000184
+          isPrivate: false
+          sortKey: -1749999999500
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "name": "Test Visitor",
+              "phone": "9200000000",
+              "purpose": "Testing"
+            }
+        headers:
+          - name: Accept
+            value: application/json
+          - name: Content-Type
+            value: application/json
+          - name: User-Agent
+            value: insomnia/11.0.2
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_7aeac932507b4c05a721f8fe6d1945b2
+    created: 1756138112087
+    modified: 1788500000000
+  cookies:
+    - id: a278421a-9619-4170-b268-b5a2a98ae307
+      key: XSRF-TOKEN
+      value: eyJpdiI6Im5zV3U3N2hCbkdBR1hNVHAvdTcwekE9PSIsInZhbHVlIjoicThZdGtyZ0FMZC80Y3lVK0RSQ0hPKzV4WkxzN1lXdDJmSldicWd1ZFFJVkU4WkhmRVBGSWhhdG80cGwrdC82RGhuNU9LakJXT1JtRmR1TGhTa0xDc0R5d1R5SnFOMFhscmhjSmVHcURvSi9Hek8xdUlIN2NjbUNoVjZWdHQ0cHciLCJtYWMiOiI5OWE1MDc3YWNmYjIzMzRjZDBmYzA0YjM2MDc5YTcyZGNjMDkzMWViOWI2ZTU1YzA4OTlkZDcwNGQ3MGZiMDA1IiwidGFnIjoiIn0%3D
+      domain: 127.0.0.1
+      path: /
+      secure: false
+      httpOnly: false
+      hostOnly: true
+    - id: 5fb9b6d3-94a8-4717-900b-370a9214b01d
+      key: laravel_session
+      value: eyJpdiI6IkF1MzBUVFBrMkd1R2Fyb1lMaExlTEE9PSIsInZhbHVlIjoiZjFCbFhXd3VEaUgyREc3VTFwNklCbE5WY2tENTZMdTdKc052ektKVHB6K1FjSWhUTG01ZVhzUVFoeFZGck42SFcrQUV1N3FyVDc3cEloZnVOZlZVcnNoUWFvK0toTytnQXY0czh5dUxDbGVMNXlSUnRkaXl3azZrSjhiSUFFMysiLCJtYWMiOiJmNjMzODA2MzI2MDlmYWM2YzMxYTRkZWNmYzE2YzhiNGI5NGY4NTNkNjAwZTQ3ZmQzODRjNjY5ZTFjMzYwNjUxIiwidGFnIjoiIn0%3D
+      domain: 127.0.0.1
+      path: /
+      secure: false
+      httpOnly: true
+      hostOnly: true
+
+environments:
+  name: Base Environment
+  meta:
+    id: env_7fef88659ec34fe8a8b04d5f1b215790
+    created: 1756138112082
+    modified: 1788500000000
+    isPrivate: false
+  data:
+    auth:
+      bearerToken: 5|SHr7eZFkdn2qOrCbQRH4onrWUIaa68O7JiBMaOFM836de723
+    base_url_2: http://127.0.0.1:8000/api
+    base_url: http://127.0.0.1/cnat_api/public/api

@@ -1,0 +1,1559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CNAT API — Authentication & Authorization Guide</title>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;1,400&family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons (CDN) -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Mermaid.js for Diagrams -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <style>
+    :root {
+      --bg-primary: #0b0f19;
+      --bg-secondary: #111827;
+      --bg-card: rgba(17, 24, 39, 0.85);
+      --bg-card-hover: rgba(31, 41, 55, 0.9);
+      --bg-code: #030712;
+      --border-color: #1f293d;
+      --border-glow: rgba(56, 189, 248, 0.3);
+      --text-primary: #f3f4f6;
+      --text-secondary: #9ca3af;
+      --text-muted: #6b7280;
+      --accent-cyan: #38bdf8;
+      --accent-blue: #3b82f6;
+      --accent-indigo: #6366f1;
+      --accent-purple: #a855f7;
+      --accent-emerald: #10b981;
+      --accent-amber: #f59e0b;
+      --accent-rose: #f43f5e;
+      --gradient-brand: linear-gradient(135deg, #38bdf8 0%, #6366f1 50%, #a855f7 100%);
+      --gradient-surface: linear-gradient(180deg, rgba(30, 41, 59, 0.5) 0%, rgba(15, 23, 42, 0.8) 100%);
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 25px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+      --shadow-glow: 0 0 20px rgba(56, 189, 248, 0.15);
+      --font-heading: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #ffffff;
+      --bg-card: rgba(255, 255, 255, 0.9);
+      --bg-card-hover: #f1f5f9;
+      --bg-code: #0f172a;
+      --border-color: #e2e8f0;
+      --border-glow: rgba(3, 105, 161, 0.2);
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #94a3b8;
+      --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      line-height: 1.65;
+      overflow-x: hidden;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    /* Top Navigation Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(11, 15, 25, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.75rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    [data-theme="light"] .header {
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .logo-badge {
+      background: var(--gradient-brand);
+      color: #fff;
+      font-weight: 800;
+      font-size: 0.85rem;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
+      letter-spacing: 0.05em;
+    }
+
+    .header-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      width: 260px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.45rem 0.75rem 0.45rem 2.2rem;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: var(--accent-cyan);
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+    }
+
+    .search-input-wrap i {
+      position: absolute;
+      left: 0.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      width: 16px;
+      height: 16px;
+    }
+
+    .theme-toggle-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      padding: 0.45rem 0.65rem;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: color 0.2s, background 0.2s;
+    }
+
+    .theme-toggle-btn:hover {
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    /* Layout: Sidebar + Main Content */
+    .app-container {
+      display: flex;
+      max-width: 1600px;
+      margin: 0 auto;
+      min-height: calc(100vh - 65px);
+    }
+
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 280px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 65px;
+      height: calc(100vh - 65px);
+      overflow-y: auto;
+      padding: 1.5rem 1rem;
+      border-right: 1px solid var(--border-color);
+      background: var(--bg-secondary);
+    }
+
+    .nav-group-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      margin: 1.25rem 0 0.5rem 0.75rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.55rem 0.75rem;
+      border-radius: 8px;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.88rem;
+      font-weight: 500;
+      transition: all 0.2s;
+      margin-bottom: 2px;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: var(--accent-cyan);
+      background: rgba(56, 189, 248, 0.08);
+    }
+
+    .nav-link i {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* Main Content Area */
+    .main-content {
+      flex: 1;
+      padding: 2.5rem 3.5rem;
+      max-width: 1200px;
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+      background: var(--gradient-surface);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2.5rem;
+      margin-bottom: 3rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .hero-banner::before {
+      content: "";
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.15) 0%, rgba(99, 102, 241, 0) 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      color: var(--accent-cyan);
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 0.3rem 0.75rem;
+      border-radius: 9999px;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 2.35rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-title span {
+      background: var(--gradient-brand);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-desc {
+      font-size: 1.05rem;
+      color: var(--text-secondary);
+      max-width: 800px;
+      margin-bottom: 1.5rem;
+    }
+
+    .quick-stats {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .stat-item {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-val {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-primary);
+    }
+
+    /* Section Styling */
+    section {
+      margin-bottom: 4rem;
+      scroll-margin-top: 85px;
+    }
+
+    .section-header {
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.25);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent-cyan);
+    }
+
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .section-lead {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Novice Callout Box */
+    .novice-card {
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      border-left: 4px solid var(--accent-amber);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    .novice-header {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--accent-amber);
+      margin-bottom: 0.5rem;
+    }
+
+    .novice-text {
+      color: var(--text-secondary);
+      font-size: 0.92rem;
+      line-height: 1.6;
+    }
+
+    /* Step Walkthrough Cards */
+    .step-timeline {
+      position: relative;
+      padding-left: 2.5rem;
+      margin: 2rem 0;
+    }
+
+    .step-timeline::before {
+      content: "";
+      position: absolute;
+      left: 17px;
+      top: 10px;
+      bottom: 10px;
+      width: 2px;
+      background: linear-gradient(180deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+    }
+
+    .step-item {
+      position: relative;
+      margin-bottom: 2.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.75rem;
+      box-shadow: var(--shadow-md);
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .step-item:hover {
+      border-color: rgba(56, 189, 248, 0.4);
+      transform: translateY(-2px);
+    }
+
+    .step-badge {
+      position: absolute;
+      left: -2.5rem;
+      top: 1.5rem;
+      transform: translateX(-50%);
+      width: 36px;
+      height: 36px;
+      background: var(--bg-primary);
+      border: 2px solid var(--accent-cyan);
+      color: var(--accent-cyan);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.9rem;
+      z-index: 2;
+    }
+
+    .step-title-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .route-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid var(--border-color);
+      color: #e2e8f0;
+    }
+
+    .method-badge {
+      font-weight: 700;
+      font-size: 0.75rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+    }
+
+    .method-post { background: rgba(16, 185, 129, 0.2); color: var(--accent-emerald); }
+    .method-get { background: rgba(56, 189, 248, 0.2); color: var(--accent-cyan); }
+    .method-put { background: rgba(245, 158, 11, 0.2); color: var(--accent-amber); }
+    .method-delete { background: rgba(244, 63, 94, 0.2); color: var(--accent-rose); }
+
+    /* Code Blocks & Tabs */
+    .code-container {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 1.25rem 0;
+    }
+
+    .code-header {
+      background: rgba(15, 23, 42, 0.95);
+      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .code-file-label {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .code-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .copy-btn, .file-open-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      padding: 0.25rem 0.55rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover, .file-open-btn:hover {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--accent-cyan);
+      border-color: var(--accent-cyan);
+    }
+
+    pre {
+      padding: 1rem 1.25rem;
+      overflow-x: auto;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+    }
+
+    /* Tables */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 1.5rem 0;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      background: var(--bg-card);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(30, 41, 59, 0.5);
+      padding: 0.85rem 1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      border-bottom: 1px solid var(--border-color);
+      font-family: var(--font-heading);
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-secondary);
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(56, 189, 248, 0.03);
+    }
+
+    .code-inline {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      padding: 0.15rem 0.4rem;
+      background: rgba(56, 189, 248, 0.1);
+      color: var(--accent-cyan);
+      border-radius: 4px;
+      border: 1px solid rgba(56, 189, 248, 0.2);
+    }
+
+    /* Interactive Simulator */
+    .simulator-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: var(--shadow-lg);
+      margin: 2rem 0;
+    }
+
+    .sim-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 900px) {
+      .sim-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .sim-panel {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .sim-panel-title {
+      font-family: var(--font-heading);
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent-cyan);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 0.35rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control {
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 0.6rem 0.85rem;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .sim-btn-group {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      margin-top: 1.25rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.55rem 1.15rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--gradient-brand);
+      color: #fff;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent-cyan);
+      color: var(--accent-cyan);
+    }
+
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.15);
+      border: 1px solid rgba(244, 63, 94, 0.3);
+      color: var(--accent-rose);
+    }
+
+    .btn-danger:hover {
+      background: rgba(244, 63, 94, 0.25);
+    }
+
+    .sim-response-box {
+      background: var(--bg-code);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.85rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      max-height: 260px;
+      overflow-y: auto;
+      color: #a7f3d0;
+      white-space: pre-wrap;
+    }
+
+    /* Diagram Container */
+    .diagram-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin: 1.5rem 0;
+      text-align: center;
+      overflow-x: auto;
+    }
+
+    /* Link styling */
+    a.file-ref {
+      color: var(--accent-cyan);
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      border-bottom: 1px dashed rgba(56, 189, 248, 0.4);
+      transition: all 0.2s;
+    }
+
+    a.file-ref:hover {
+      color: #7dd3fc;
+      border-bottom-style: solid;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .sidebar { display: none; }
+      .main-content { padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <header class="header">
+    <a href="#" class="header-logo">
+      <span class="logo-badge">CNAT API</span>
+      <span class="header-title">Auth & Role Guide</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-input-wrap">
+        <i data-lucide="search"></i>
+        <input type="text" id="docSearch" placeholder="Search functions, tables, routes..." onkeyup="filterDocs()" />
+      </div>
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <i data-lucide="sun" id="themeIcon"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="app-container">
+
+    <!-- Left Sidebar -->
+    <aside class="sidebar">
+      <div class="nav-group-title">Overview</div>
+      <a href="#overview" class="nav-link active"><i data-lucide="compass"></i> The Big Picture</a>
+      <a href="#hotel-analogy" class="nav-link"><i data-lucide="key"></i> Hotel Keycard Analogy</a>
+      <a href="#database-schema" class="nav-link"><i data-lucide="database"></i> Database & ERD</a>
+
+      <div class="nav-group-title">Step-by-Step Lifecycle</div>
+      <a href="#step-1-seeding" class="nav-link"><i data-lucide="sprout"></i> 1. System Seeding</a>
+      <a href="#step-2-registration" class="nav-link"><i data-lucide="user-plus"></i> 2. User Registration</a>
+      <a href="#step-3-login" class="nav-link"><i data-lucide="log-in"></i> 3. Login & Tokens</a>
+      <a href="#step-4-bearer-auth" class="nav-link"><i data-lucide="shield-check"></i> 4. Bearer Token Guard</a>
+      <a href="#step-5-role-check" class="nav-link"><i data-lucide="lock"></i> 5. Role Authorization</a>
+      <a href="#step-6-profile" class="nav-link"><i data-lucide="user"></i> 6. Profile Resolution</a>
+      <a href="#step-7-logout" class="nav-link"><i data-lucide="log-out"></i> 7. Logout & Revocation</a>
+
+      <div class="nav-group-title">Hands-on & Reference</div>
+      <a href="#interactive-simulator" class="nav-link"><i data-lucide="play-circle"></i> Live Auth Simulator</a>
+      <a href="#code-map" class="nav-link"><i data-lucide="file-code"></i> Code Map & Line Links</a>
+      <a href="#faqs" class="nav-link"><i data-lucide="help-circle"></i> Novice FAQs</a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+      <!-- Hero Banner -->
+      <div class="hero-banner">
+        <div class="hero-badge"><i data-lucide="shield"></i> Laravel 11 & Sanctum Token Architecture</div>
+        <h1 class="hero-title">Step-by-Step <span>Authentication</span> & Role System</h1>
+        <p class="hero-desc">
+          A crystal clear guide designed for novices and developers alike. Understand how passwords get hashed, tokens are created, requests are guarded, and roles are verified across database tables.
+        </p>
+        <div class="quick-stats">
+          <div class="stat-item">
+            <span class="stat-label">Authentication Engine</span>
+            <span class="stat-val">Laravel Sanctum</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Token Format</span>
+            <span class="stat-val">Bearer {id}|{hash}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Password Hashing</span>
+            <span class="stat-val">Bcrypt (One-way)</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Database Tables</span>
+            <span class="stat-val">5 Connected Tables</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 1: Overview -->
+      <section id="overview">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="compass"></i></div>
+          <h2 class="section-title">1. The Big Picture: What is API Authentication?</h2>
+        </div>
+        <p class="section-lead">
+          Unlike traditional websites where your browser saves cookies in a session, <strong>REST APIs</strong> are <strong>stateless</strong>. Every single HTTP request sent to the server must carry its own identification badge.
+        </p>
+
+        <!-- Novice Card: Analogy -->
+        <div class="novice-card" id="hotel-analogy">
+          <div class="novice-header">
+            <i data-lucide="sparkles"></i> Novice Corner: The Hotel Keycard Metaphor
+          </div>
+          <p class="novice-text">
+            Think of how a modern hotel works:<br>
+            • <strong>Login (<code class="code-inline">POST /api/login</code>):</strong> You present your username & password at the front desk.<br>
+            • <strong>Token Creation:</strong> The desk clerk verifies who you are and gives you a <strong>magnetic room keycard</strong> (<code class="code-inline">auth_token</code>).<br>
+            • <strong>Protected Endpoints (<code class="code-inline">auth:sanctum</code>):</strong> When you ride the elevator or open doors, you tap your card. You don't need to recite your password every time.<br>
+            • <strong>Role Access (<code class="code-inline">role:Admin,Owner</code>):</strong> If a guest tries to tap their card at the <em>"Staff Maintenance Room"</em>, the reader beeps red (<strong>403 Forbidden</strong>).<br>
+            • <strong>Logout (<code class="code-inline">POST /api/logout</code>):</strong> When checking out, the system deletes your keycard code so it cannot open doors anymore.
+          </p>
+        </div>
+
+        <div class="diagram-container">
+          <pre class="mermaid">
+sequenceDiagram
+    autonumber
+    actor Client as 📱 Frontend / Mobile App
+    participant Route as 🚦 Router (api.php)
+    participant AuthCtrl as ⚙️ AuthController
+    participant Sanctum as 🛡️ Laravel Sanctum
+    participant DB as 🗄️ MySQL Database
+
+    Client->>Route: POST /api/login {email, password}
+    Route->>AuthCtrl: login(LoginRequest $request)
+    AuthCtrl->>DB: Verify email & bcrypt password in `users`
+    DB-->>AuthCtrl: Credentials Validated
+    AuthCtrl->>Sanctum: $user->createToken('auth_token')
+    Sanctum->>DB: Insert hashed token into `personal_access_tokens`
+    DB-->>Sanctum: Token Saved (ID: 1)
+    Sanctum-->>AuthCtrl: PlainTextToken "1|a8f9c4b..."
+    AuthCtrl-->>Client: 200 OK { token, user profile }
+
+    Note over Client,DB: Subsequent Authenticated Requests
+    Client->>Route: GET /api/me (Header: Authorization: Bearer 1|a8f9c4b...)
+    Route->>Sanctum: Middleware `auth:sanctum` validates token
+    Sanctum->>DB: Look up token in `personal_access_tokens` & find `user_id`
+    DB-->>Sanctum: User Authenticated
+    Sanctum->>AuthCtrl: getCurrentUser()
+    AuthCtrl-->>Client: 200 OK { user: { id, name, role, department } }
+          </pre>
+        </div>
+      </section>
+
+      <!-- Section 2: Database Schema & ERD -->
+      <section id="database-schema">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="database"></i></div>
+          <h2 class="section-title">2. Database Schema & Table Relationships</h2>
+        </div>
+        <p class="section-lead">
+          The CNAT authentication system connects 5 key tables to manage accounts, credentials, access tokens, and organizational profiles.
+        </p>
+
+        <div class="diagram-container">
+          <pre class="mermaid">
+erDiagram
+    USERS ||--o{ PERSONAL_ACCESS_TOKENS : "owns (Sanctum Tokens)"
+    USER_TYPES ||--o{ USERS : "defines role of"
+    EMPLOYEES ||--o{ USERS : "profile info (if staff)"
+    STUDENTS ||--o{ USERS : "profile info (if candidate)"
+
+    USERS {
+        bigint id PK
+        string email UK "Login username/email"
+        string password "Bcrypt hashed password"
+        bigint user_type_id FK "References user_types.id"
+        bigint employee_id FK "References employees.id (Nullable)"
+        bigint student_id FK "References students.id (Nullable)"
+        string remember_token
+        timestamp created_at
+    }
+
+    USER_TYPES {
+        bigint id PK
+        string user_type_name "Admin, Teacher, Manager, Student..."
+        timestamp created_at
+    }
+
+    PERSONAL_ACCESS_TOKENS {
+        bigint id PK
+        string tokenable_type "App\\Models\\User"
+        bigint tokenable_id FK "users.id"
+        string name "auth_token"
+        string token "64-char SHA-256 Hash"
+        text abilities
+        timestamp last_used_at
+        timestamp expires_at
+    }
+
+    EMPLOYEES {
+        bigint id PK
+        string employee_name "Full name"
+        string email
+        string mobile
+        bigint department_id FK
+        bigint designation_id FK
+    }
+
+    STUDENTS {
+        bigint id PK
+        string student_name "Candidate name"
+        string email
+        string phone1
+        string whatsapp
+    }
+          </pre>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Table Name</th>
+                <th>Model File</th>
+                <th>Purpose in Auth Flow</th>
+                <th>Key Columns</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong><code class="code-inline">users</code></strong></td>
+                <td><a href="file:///e:/cnat_api/app/Models/User.php" class="file-ref">User.php</a></td>
+                <td>Stores authentication identity, password hash, and links to employee/student records.</td>
+                <td><code class="code-inline">id</code>, <code class="code-inline">email</code>, <code class="code-inline">password</code>, <code class="code-inline">user_type_id</code>, <code class="code-inline">employee_id</code>, <code class="code-inline">student_id</code></td>
+              </tr>
+              <tr>
+                <td><strong><code class="code-inline">user_types</code></strong></td>
+                <td><a href="file:///e:/cnat_api/app/Models/UserType.php" class="file-ref">UserType.php</a></td>
+                <td>Stores role names: Admin (1), Developer (2), Owner (3), Manager (4), Teacher (5), Student (8).</td>
+                <td><code class="code-inline">id</code>, <code class="code-inline">user_type_name</code></td>
+              </tr>
+              <tr>
+                <td><strong><code class="code-inline">personal_access_tokens</code></strong></td>
+                <td><code class="code-inline">Laravel\Sanctum\PersonalAccessToken</code></td>
+                <td>Stores active bearer tokens generated on login.</td>
+                <td><code class="code-inline">id</code>, <code class="code-inline">tokenable_id</code>, <code class="code-inline">name</code>, <code class="code-inline">token</code>, <code class="code-inline">last_used_at</code></td>
+              </tr>
+              <tr>
+                <td><strong><code class="code-inline">employees</code></strong></td>
+                <td><a href="file:///e:/cnat_api/app/Models/Employee.php" class="file-ref">Employee.php</a></td>
+                <td>Staff profile (name, phone, department, designation) merged into user resource.</td>
+                <td><code class="code-inline">id</code>, <code class="code-inline">employee_name</code>, <code class="code-inline">mobile</code>, <code class="code-inline">department_id</code></td>
+              </tr>
+              <tr>
+                <td><strong><code class="code-inline">students</code></strong></td>
+                <td><a href="file:///e:/cnat_api/app/Models/Student.php" class="file-ref">Student.php</a></td>
+                <td>Candidate profile merged into user resource when user represents a student.</td>
+                <td><code class="code-inline">id</code>, <code class="code-inline">student_name</code>, <code class="code-inline">whatsapp</code>, <code class="code-inline">email</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 3: Step-by-Step Lifecycle -->
+      <section id="step-timeline-section">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="layers"></i></div>
+          <h2 class="section-title">3. Step-by-Step Authentication Lifecycle</h2>
+        </div>
+
+        <div class="step-timeline">
+
+          <!-- Step 1 -->
+          <div class="step-item" id="step-1-seeding">
+            <div class="step-badge">1</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">Database Seeding & Default Accounts</h3>
+              <span class="route-pill">Console: php artisan db:seed</span>
+            </div>
+            <p class="section-lead">
+              When the database is seeded, initial role types and administrator accounts are inserted with encrypted passwords.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="file-text"></i> database/seeders/UserSeeder.php</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/database/seeders/UserSeeder.php" class="file-open-btn"><i data-lucide="external-link"></i> Open File</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>// Creating default Administrator account
+$user = User::create([
+    'email'        => 'sukantahui',
+    'password'     => Hash::make('Cnat@1977'), // Secure Bcrypt Hash
+    'user_type_id' => 1,                       // 1 = Admin
+    'employee_id'  => 1                        // Linked to Employee record 1
+]);</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 2 -->
+          <div class="step-item" id="step-2-registration">
+            <div class="step-badge">2</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">User Registration (Admin Provisioning)</h3>
+              <span class="route-pill"><span class="method-badge method-post">POST</span> /api/users</span>
+            </div>
+            <p class="section-lead">
+              Administrators provision new users by sending a payload validated by <a href="file:///e:/cnat_api/app/Http/Requests/RegisterRequest.php" class="file-ref">RegisterRequest.php</a>.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="file-code"></i> app/Http/Controllers/Api/AuthController.php (register)</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/app/Http/Controllers/Api/AuthController.php#L36" class="file-open-btn"><i data-lucide="external-link"></i> AuthController.php:36</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>public function register(RegisterRequest $request)
+{
+    try {
+        $user = User::create([
+            'email'        => $request->email,
+            'password'     => Hash::make($request->password), // One-way bcrypt hash!
+            'user_type_id' => $request->user_type_id,
+            'employee_id'  => $request->employee_id,
+            'student_id'   => $request->student_id,
+        ]);
+
+        $user->load(['userType', 'employee.department', 'employee.designation', 'student']);
+        return ResponseHelper::success('User created successfully', ['user' => new UserResource($user)], 201);
+    } catch (Exception $e) {
+        return ResponseHelper::error($e->getMessage());
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 3 -->
+          <div class="step-item" id="step-3-login">
+            <div class="step-badge">3</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">User Login & Token Generation</h3>
+              <span class="route-pill"><span class="method-badge method-post">POST</span> /api/login</span>
+            </div>
+            <p class="section-lead">
+              Validates input credentials, checks database connectivity, verifies password with Bcrypt, and issues a Laravel Sanctum Bearer token.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="file-code"></i> app/Http/Controllers/Api/AuthController.php (login)</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/app/Http/Controllers/Api/AuthController.php#L62" class="file-open-btn"><i data-lucide="external-link"></i> AuthController.php:62</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>public function login(LoginRequest $request)
+{
+    // 1. Health check database connection
+    try {
+        DB::connection()->getPdo();
+    } catch (\Exception $e) {
+        return ResponseHelper::error($e->getMessage(), null, 503);
+    }
+
+    try {
+        // 2. Attempt authentication against 'users' table
+        if (!Auth::attempt($request->only('email', 'password'))) {
+            return ResponseHelper::error('Invalid credentials', null, 401);
+        }
+
+        // 3. Get the authenticated user model
+        $user = Auth::user();
+
+        // 4. Generate Sanctum Personal Access Token
+        $token = $user->createToken('auth_token')->plainTextToken;
+
+        // 5. Return standardized success response
+        return ResponseHelper::success('login successfully', [
+            'user'  => new UserResource($user),
+            'token' => $token
+        ], 200);
+    } catch (Exception $e) {
+        return ResponseHelper::error($e->getMessage(), null);
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 4 -->
+          <div class="step-item" id="step-4-bearer-auth">
+            <div class="step-badge">4</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">Sending Authenticated Requests (Sanctum Guard)</h3>
+              <span class="route-pill"><span class="method-badge method-get">GET</span> /api/me</span>
+            </div>
+            <p class="section-lead">
+              Clients pass the issued token in the <code class="code-inline">Authorization: Bearer &lt;token&gt;</code> HTTP header. The <code class="code-inline">auth:sanctum</code> middleware resolves the active user.
+            </p>
+
+            <div class="novice-card">
+              <div class="novice-header"><i data-lucide="info"></i> How Sanctum Finds the User</div>
+              <p class="novice-text">
+                When you send <code class="code-inline">Authorization: Bearer 1|a8f9c4...</code>:<br>
+                1. Sanctum reads the token ID before the pipe (<code class="code-inline">1</code>).<br>
+                2. Sanctum computes a SHA-256 hash of the string after the pipe (<code class="code-inline">a8f9c4...</code>).<br>
+                3. Queries <code class="code-inline">personal_access_tokens</code> where <code class="code-inline">id = 1</code> and matches the hash.<br>
+                4. Loads the user record (<code class="code-inline">tokenable_id</code>) and binds it to <code class="code-inline">auth()->user()</code>.
+              </p>
+            </div>
+          </div>
+
+          <!-- Step 5 -->
+          <div class="step-item" id="step-5-role-check">
+            <div class="step-badge">5</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">Role-Based Access Control (RBAC)</h3>
+              <span class="route-pill">Middleware: role:Admin,Developer,Owner</span>
+            </div>
+            <p class="section-lead">
+              Restricted routes are guarded by the <a href="file:///e:/cnat_api/app/Http/Middleware/CheckRole.php" class="file-ref">CheckRole.php</a> middleware, comparing user roles.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="shield"></i> app/Http/Middleware/CheckRole.php</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/app/Http/Middleware/CheckRole.php#L19" class="file-open-btn"><i data-lucide="external-link"></i> CheckRole.php:19</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>public function handle(Request $request, Closure $next, ...$roles): Response
+{
+    $user = $request->user();
+
+    if (!$user) {
+        return response()->json(['status' => false, 'message' => 'Unauthenticated.'], 401);
+    }
+
+    // $user->hasRole() checks user_types table for matches (e.g. 'Admin', 'Teacher')
+    if (!$user->hasRole($roles)) {
+        $required = implode(', ', array_map('trim', $roles));
+        return response()->json([
+            'status'   => false,
+            'message'  => "Forbidden: This action requires the [{$required}] role.",
+            'userRole' => $user->role_name,
+        ], 403);
+    }
+
+    return $next($request);
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 6 -->
+          <div class="step-item" id="step-6-profile">
+            <div class="step-badge">6</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">Profile Transformation & Fallbacks</h3>
+              <span class="route-pill">Resource: UserResource.php</span>
+            </div>
+            <p class="section-lead">
+              Normalizes user responses whether the account belongs to an Employee, Student, or System Admin.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="file-text"></i> app/Http/Resources/UserResource.php</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/app/Http/Resources/UserResource.php#L17" class="file-open-btn"><i data-lucide="external-link"></i> UserResource.php:17</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>public function toArray(Request $request): array
+{
+    return [
+        'id'          => $this->id,
+        'userName'    => $this->email,
+        'name'        => $this->student?->student_name ?? $this->employee?->employee_name ?? $this->email,
+        'email'       => $this->student?->email ?? $this->employee?->email ?? $this->email,
+        'role'        => $this->role_name,
+        'mobile'      => $this->student?->whatsapp ?? $this->student?->phone1 ?? $this->employee?->mobile,
+        'department'  => $this->employee?->department?->department_name ?? ($this->student ? 'Academics' : 'General'),
+        'designation' => $this->employee?->designation?->designation_name ?? ($this->student ? 'Student' : 'Staff'),
+        'studentId'   => $this->student_id,
+        'employeeId'  => $this->employee_id,
+    ];
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Step 7 -->
+          <div class="step-item" id="step-7-logout">
+            <div class="step-badge">7</div>
+            <div class="step-title-wrap">
+              <h3 class="step-title">Logout & Token Revocation</h3>
+              <span class="route-pill"><span class="method-badge method-post">POST</span> /api/logout</span>
+            </div>
+            <p class="section-lead">
+              Revokes the active session token, removing the record from <code class="code-inline">personal_access_tokens</code>.
+            </p>
+
+            <div class="code-container">
+              <div class="code-header">
+                <span class="code-file-label"><i data-lucide="file-code"></i> app/Http/Controllers/Api/AuthController.php (logout)</span>
+                <div class="code-actions">
+                  <a href="file:///e:/cnat_api/app/Http/Controllers/Api/AuthController.php#L113" class="file-open-btn"><i data-lucide="external-link"></i> AuthController.php:113</a>
+                  <button class="copy-btn" onclick="copyCode(this)"><i data-lucide="copy"></i> Copy</button>
+                </div>
+              </div>
+              <pre><code>// Single session logout
+public function logout()
+{
+    $user = auth()->user();
+    $user->tokens()->delete(); // Purges tokens for current user
+    return ResponseHelper::success('Logged out successfully', $user, 200);
+}
+
+// Global revoke (Sign out everywhere)
+public function revoke_all()
+{
+    $result = auth()->user()->tokens()->delete();
+    return ResponseHelper::success('Revoke all', $result, 200);
+}</code></pre>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Section 4: Interactive Simulator -->
+      <section id="interactive-simulator">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="play-circle"></i></div>
+          <h2 class="section-title">4. Interactive Auth & RBAC Simulator</h2>
+        </div>
+        <p class="section-lead">
+          Test out how authentication works right in your browser! See how credentials turn into tokens and how roles permit or block access.
+        </p>
+
+        <div class="simulator-container">
+          <div class="sim-grid">
+            <!-- Left Panel: Controls -->
+            <div class="sim-panel">
+              <div class="sim-panel-title"><i data-lucide="sliders"></i> Client Request Console</div>
+
+              <div class="form-group">
+                <label>Select Sample Account</label>
+                <select class="form-control" id="simUserSelect" onchange="onSelectSimUser()">
+                  <option value="admin">Admin (sukantahui / Cnat@1977) — Role: Admin</option>
+                  <option value="developer">Developer (developer@gmail.com) — Role: Developer</option>
+                  <option value="manager">Manager (manager@gmail.com) — Role: Manager</option>
+                  <option value="teacher">Teacher (tanusreehui) — Role: Teacher</option>
+                  <option value="student">Student (student@cnat.in) — Role: Student</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Simulated Active Token</label>
+                <input type="text" class="form-control" id="simTokenInput" value="None (Not Logged In)" readonly />
+              </div>
+
+              <div class="form-group">
+                <label>Target API Endpoint To Test</label>
+                <select class="form-control" id="simEndpointSelect">
+                  <option value="/api/me">GET /api/me (Any Authenticated)</option>
+                  <option value="/api/cycle/me">GET /api/cycle/me (Any Authenticated)</option>
+                  <option value="/api/users">GET /api/users (Requires: Admin, Developer, Owner)</option>
+                  <option value="/api/admissions">GET /api/admissions (Requires: Admin, Dev, Owner, Manager)</option>
+                  <option value="/api/questions">GET /api/questions (Requires: Admin, Dev, Manager, Teacher)</option>
+                  <option value="/api/guests">GET /api/guests (Requires: Admin, Dev, Manager, Teacher, Sales)</option>
+                </select>
+              </div>
+
+              <div class="sim-btn-group">
+                <button class="btn btn-primary" onclick="simLogin()"><i data-lucide="log-in"></i> Simulate Login</button>
+                <button class="btn btn-secondary" onclick="simSendRequest()"><i data-lucide="send"></i> Test Endpoint Access</button>
+                <button class="btn btn-danger" onclick="simLogout()"><i data-lucide="log-out"></i> Logout</button>
+              </div>
+            </div>
+
+            <!-- Right Panel: Response Output -->
+            <div class="sim-panel">
+              <div class="sim-panel-title"><i data-lucide="terminal"></i> Server Response Payload</div>
+              <div class="sim-response-box" id="simOutput">// Click 'Simulate Login' to start the interactive test.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section 5: Code Map -->
+      <section id="code-map">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="file-code"></i></div>
+          <h2 class="section-title">5. Code Map & Source File Links</h2>
+        </div>
+        <p class="section-lead">
+          Direct links to all core authentication and authorization files in your workspace:
+        </p>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Component</th>
+                <th>File Path</th>
+                <th>Key Methods & Functions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Auth Controller</strong></td>
+                <td><a href="file:///e:/cnat_api/app/Http/Controllers/Api/AuthController.php" class="file-ref">AuthController.php</a></td>
+                <td><code class="code-inline">login()</code>, <code class="code-inline">register()</code>, <code class="code-inline">getCurrentUser()</code>, <code class="code-inline">logout()</code>, <code class="code-inline">revoke_all()</code></td>
+              </tr>
+              <tr>
+                <td><strong>User Model</strong></td>
+                <td><a href="file:///e:/cnat_api/app/Models/User.php" class="file-ref">User.php</a></td>
+                <td><code class="code-inline">userType()</code>, <code class="code-inline">employee()</code>, <code class="code-inline">student()</code>, <code class="code-inline">hasRole()</code>, <code class="code-inline">isAdmin()</code></td>
+              </tr>
+              <tr>
+                <td><strong>Role Middleware</strong></td>
+                <td><a href="file:///e:/cnat_api/app/Http/Middleware/CheckRole.php" class="file-ref">CheckRole.php</a></td>
+                <td><code class="code-inline">handle(Request $request, Closure $next, ...$roles)</code></td>
+              </tr>
+              <tr>
+                <td><strong>Form Request</strong></td>
+                <td><a href="file:///e:/cnat_api/app/Http/Requests/RegisterRequest.php" class="file-ref">RegisterRequest.php</a></td>
+                <td><code class="code-inline">rules()</code>, <code class="code-inline">messages()</code> (unique email, role checks)</td>
+              </tr>
+              <tr>
+                <td><strong>API Transformer</strong></td>
+                <td><a href="file:///e:/cnat_api/app/Http/Resources/UserResource.php" class="file-ref">UserResource.php</a></td>
+                <td><code class="code-inline">toArray()</code> (normalizes Student / Employee details)</td>
+              </tr>
+              <tr>
+                <td><strong>API Routes</strong></td>
+                <td><a href="file:///e:/cnat_api/routes/api.php" class="file-ref">routes/api.php</a></td>
+                <td>Route groups: <code class="code-inline">auth:sanctum</code>, <code class="code-inline">role:Admin,Developer,Owner</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Section 6: FAQs -->
+      <section id="faqs">
+        <div class="section-header">
+          <div class="section-icon"><i data-lucide="help-circle"></i></div>
+          <h2 class="section-title">6. Novice FAQs & Concepts</h2>
+        </div>
+
+        <div class="novice-card">
+          <div class="novice-header"><i data-lucide="help-circle"></i> Why do we hash passwords with Bcrypt?</div>
+          <p class="novice-text">
+            Bcrypt is a <strong>one-way mathematical function</strong>. Once a password like <code class="code-inline">Cnat@1977</code> is turned into <code class="code-inline">$2y$12$...</code>, nobody (not even system administrators) can reverse it back to plain text. When logging in, Laravel hashes the user's attempt and checks if both hashes match.
+          </p>
+        </div>
+
+        <div class="novice-card">
+          <div class="novice-header"><i data-lucide="help-circle"></i> What is the difference between 401 Unauthorized and 403 Forbidden?</div>
+          <p class="novice-text">
+            • <strong>401 Unauthorized:</strong> "I don't know who you are" (Missing or expired Bearer token).<br>
+            • <strong>403 Forbidden:</strong> "I know who you are, but you don't have permission" (e.g., A Teacher trying to access the Admin Users list).
+          </p>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script>
+    // Initialize Lucide Icons
+    lucide.createIcons();
+
+    // Initialize Mermaid Diagrams
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#0284c7',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#38bdf8',
+        lineColor: '#38bdf8',
+        secondaryColor: '#1e293b',
+        tertiaryColor: '#0f172a'
+      }
+    });
+
+    // Theme Toggle
+    function toggleTheme() {
+      const current = document.body.getAttribute('data-theme');
+      const newTheme = current === 'light' ? 'dark' : 'light';
+      document.body.setAttribute('data-theme', newTheme);
+      const icon = document.getElementById('themeIcon');
+      if (newTheme === 'light') {
+        icon.setAttribute('data-lucide', 'moon');
+      } else {
+        icon.setAttribute('data-lucide', 'sun');
+      }
+      lucide.createIcons();
+    }
+
+    // Search Filter
+    function filterDocs() {
+      const query = document.getElementById('docSearch').value.toLowerCase();
+      const sections = document.querySelectorAll('section');
+      sections.forEach(sec => {
+        const text = sec.innerText.toLowerCase();
+        if (text.includes(query)) {
+          sec.style.display = '';
+        } else {
+          sec.style.display = 'none';
+        }
+      });
+    }
+
+    // Code Copy Function
+    function copyCode(btn) {
+      const pre = btn.closest('.code-container').querySelector('pre code');
+      navigator.clipboard.writeText(pre.innerText).then(() => {
+        const original = btn.innerHTML;
+        btn.innerHTML = '<i data-lucide="check"></i> Copied!';
+        btn.style.color = 'var(--accent-emerald)';
+        lucide.createIcons();
+        setTimeout(() => {
+          btn.innerHTML = original;
+          btn.style.color = '';
+          lucide.createIcons();
+        }, 2000);
+      });
+    }
+
+    // Simulator State
+    const mockUsers = {
+      admin: { id: 1, name: "Dr. Sukanta Hui", email: "sukantahui", role: "Admin", dept: "Computer Science", designation: "Director", employeeId: 1, studentId: null },
+      developer: { id: 2, name: "System Developer", email: "developer@gmail.com", role: "Developer", dept: "Engineering", designation: "Lead Engineer", employeeId: 2, studentId: null },
+      manager: { id: 3, name: "Operations Manager", email: "manager@gmail.com", role: "Manager", dept: "Administration", designation: "Branch Manager", employeeId: 3, studentId: null },
+      teacher: { id: 5, name: "Tanusree Hui", email: "tanusreehui", role: "Teacher", dept: "Academics", designation: "Senior Lecturer", employeeId: 2, studentId: null },
+      student: { id: 8, name: "Rahul Sharma", email: "student@cnat.in", role: "Student", dept: "Academics", designation: "Student", employeeId: null, studentId: 101 }
+    };
+
+    let currentSession = null;
+
+    function onSelectSimUser() {
+      if (currentSession) {
+        simLogin();
+      }
+    }
+
+    function simLogin() {
+      const key = document.getElementById('simUserSelect').value;
+      const user = mockUsers[key];
+      const token = `${user.id}|${Math.random().toString(36).substring(2, 15)}${Math.random().toString(36).substring(2, 15)}`;
+      currentSession = { user, token };
+
+      document.getElementById('simTokenInput').value = token;
+      const response = {
+        status: true,
+        message: "login successfully",
+        data: {
+          user: {
+            id: user.id,
+            userName: user.email,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            department: user.dept,
+            designation: user.designation,
+            studentId: user.studentId,
+            employeeId: user.employeeId
+          },
+          token: token
+        }
+      };
+
+      document.getElementById('simOutput').innerText = "// HTTP 200 OK (POST /api/login)\n" + JSON.stringify(response, null, 2);
+    }
+
+    function simSendRequest() {
+      const endpoint = document.getElementById('simEndpointSelect').value;
+      if (!currentSession) {
+        document.getElementById('simOutput').innerText = "// HTTP 401 Unauthorized\n{\n  \"status\": false,\n  \"message\": \"Unauthenticated. Please provide a valid Bearer token in the Authorization header.\",\n  \"data\": null\n}";
+        return;
+      }
+
+      const role = currentSession.user.role;
+
+      // Role check simulation
+      if (endpoint === '/api/users' && !['Admin', 'Developer', 'Owner'].includes(role)) {
+        document.getElementById('simOutput').innerText = `// HTTP 403 Forbidden\n{\n  \"status\": false,\n  \"message\": \"Forbidden: This action requires the [Admin, Developer, Owner] role.\",\n  \"data\": null,\n  \"userRole\": \"${role}\"\n}`;
+        return;
+      }
+
+      if (endpoint === '/api/admissions' && !['Admin', 'Developer', 'Owner', 'Manager'].includes(role)) {
+        document.getElementById('simOutput').innerText = `// HTTP 403 Forbidden\n{\n  \"status\": false,\n  \"message\": \"Forbidden: This action requires the [Admin, Developer, Owner, Manager] role.\",\n  \"data\": null,\n  \"userRole\": \"${role}\"\n}`;
+        return;
+      }
+
+      if (endpoint === '/api/questions' && !['Admin', 'Developer', 'Owner', 'Manager', 'Teacher'].includes(role)) {
+        document.getElementById('simOutput').innerText = `// HTTP 403 Forbidden\n{\n  \"status\": false,\n  \"message\": \"Forbidden: This action requires the [Admin, Developer, Owner, Manager, Teacher] role.\",\n  \"data\": null,\n  \"userRole\": \"${role}\"\n}`;
+        return;
+      }
+
+      // Success
+      document.getElementById('simOutput').innerText = `// HTTP 200 OK (${endpoint})\n{\n  \"status\": true,\n  \"message\": \"Resource retrieved successfully\",\n  \"authorizedRole\": \"${role}\",\n  \"data\": {\n    \"user\": \"${currentSession.user.name}\",\n    \"scope\": \"${endpoint}\",\n    \"timestamp\": \"${new Date().toISOString()}\"\n  }\n}`;
+    }
+
+    function simLogout() {
+      if (!currentSession) {
+        document.getElementById('simOutput').innerText = "// HTTP 401 Unauthorized\n{\n  \"status\": false,\n  \"message\": \"Already logged out.\"\n}";
+        return;
+      }
+      currentSession = null;
+      document.getElementById('simTokenInput').value = "None (Logged Out)";
+      document.getElementById('simOutput').innerText = "// HTTP 200 OK (POST /api/logout)\n{\n  \"status\": true,\n  \"message\": \"Logged out successfully\",\n  \"data\": null\n}";
+    }
+  </script>
+</body>
+</html>
