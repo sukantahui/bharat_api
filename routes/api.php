@@ -145,6 +145,18 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/{id}/cancel', 'cancel');
     });
 
+    
+    // ── POS Terminals & Multi-Area Billing Counters ────────────────────────
+    Route::controller(\App\Http\Controllers\Api\PosTerminalController::class)->prefix('pos-terminals')->group(function () {
+        Route::get('/', 'index');
+        Route::post('/', 'store');
+        Route::get('/{id}', 'show');
+        Route::put('/{id}', 'update');
+        Route::delete('/{id}', 'destroy');
+        Route::post('/{id}/open-session', 'openSession');
+        Route::post('/{id}/close-session', 'closeSession');
+    });
+
     // ── Sales & Point of Sale (POS, Old Gold Exchange, GST Billing) ──────────
     Route::controller(\App\Http\Controllers\Api\SaleController::class)->prefix('sales')->group(function () {
         Route::get('/', 'index');

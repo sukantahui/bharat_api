@@ -1,11 +1,8 @@
 <?php
 
 namespace Database\Seeders;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
 use Illuminate\Database\Seeder;
-
-use Carbon\Carbon;
-
 
 class DatabaseSeeder extends Seeder
 {
@@ -26,6 +23,7 @@ class DatabaseSeeder extends Seeder
             JewelleryCategorySeeder::class,
             ChartOfAccountsSeeder::class,
             BusinessProfileSeeder::class,
+            PosTerminalSeeder::class,
         ]);
     }
 }
