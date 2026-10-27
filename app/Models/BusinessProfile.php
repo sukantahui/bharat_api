@@ -22,12 +22,14 @@ class BusinessProfile extends Model
         'hallmark_license_no',
         'phone',
         'email',
+        'website',
         'address_line1',
         'address_line2',
         'city',
         'district_id',
         'state_id',
         'state_code',
+        'state_name',
         'pincode',
         'currency_symbol',
         'invoice_prefix',
@@ -36,6 +38,12 @@ class BusinessProfile extends Model
         'voucher_prefix',
         'financial_year_start',
         'terms_and_conditions',
+        'bank_name',
+        'bank_account_number',
+        'bank_ifsc',
+        'bank_branch',
+        'upi_id',
+        'traded_metals',
     ];
 
     protected function casts(): array
